@@ -652,26 +652,28 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
   setInterval(tick,250);
   return {cc:null,ccDone:false,ccMsg:''}; })();
 
-// ---------- v5.2 AUTO GEN buttons: hover pop-up + glowing fragments bursting out and dissolving ----------
-(function megaFx(){ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches; const SEL='.mega,#suAuto';
-  const st=document.createElement('style'); st.textContent=`${SEL.split(',').map(s=>s+'{transition:scale .28s cubic-bezier(.2,1.8,.4,1),filter .28s}').join('')}
-${SEL.split(',').map(s=>s+':hover,'+s+':focus-visible').join(',')}{scale:1.14;filter:brightness(1.25) saturate(1.3) drop-shadow(0 0 14px #22d3ee) drop-shadow(0 0 28px #a78bfa);z-index:5;position:relative}
-.mgx{position:fixed;left:0;top:0;pointer-events:none;z-index:96;border-radius:2px;will-change:transform,opacity,filter}
-@media (prefers-reduced-motion:reduce){${SEL.split(',').map(s=>s+':hover').join(',')}{scale:1.06}}`; document.head.appendChild(st);
-  const COL=['#67e8f9','#a78bfa','#f0abfc','#fde047','#ffffff','#22d3ee'];
-  function burst(b,n){ if(RM()) return; const r=b.getBoundingClientRect(); for(let i=0;i<n;i++){ const p=document.createElement('i'); p.className='mgx';
-      const edge=Math.random(), side=Math.floor(Math.random()*4); const x=side<2?r.left+edge*r.width:(side===2?r.left:r.right), y=side>=2?r.top+edge*r.height:(side===0?r.top:r.bottom);
-      const s=3+Math.random()*7, c=COL[i%COL.length], tri=Math.random()<.4; p.style.cssText=`width:${s}px;height:${s*(tri?1.8:1)}px;background:${c};box-shadow:0 0 8px ${c},0 0 16px ${c};${tri?'clip-path:polygon(50% 0,100% 100%,0 100%);':''}`;
-      document.body.appendChild(p); const cx=r.left+r.width/2, cy=r.top+r.height/2; let ang=Math.atan2(y-cy,x-cx)+(Math.random()-.5)*.9; const d=40+Math.random()*110, rot=(Math.random()-.5)*720;
-      const a=p.animate([{transform:`translate(${x}px,${y}px) rotate(0) scale(1)`,opacity:1,filter:'blur(0)'},{transform:`translate(${x+Math.cos(ang)*d*.6}px,${y+Math.sin(ang)*d*.6}px) rotate(${rot*.6}deg) scale(1.1)`,opacity:.9,filter:'blur(0)',offset:.45},{transform:`translate(${x+Math.cos(ang)*d}px,${y+Math.sin(ang)*d-20}px) rotate(${rot}deg) scale(.2)`,opacity:0,filter:'blur(6px)'}],{duration:700+Math.random()*600,easing:'cubic-bezier(.15,.7,.3,1)'});
-      a.onfinish=()=>p.remove(); } }
-  const timers=new WeakMap();
-  document.addEventListener('pointerover',e=>{ const b=e.target.closest?.(SEL); if(!b||timers.has(b)||b.disabled) return; burst(b,34); timers.set(b,setInterval(()=>{ if(b.matches(':hover')) burst(b,10); else { clearInterval(timers.get(b)); timers.delete(b); } },420)); });
-  document.addEventListener('pointerout',e=>{ const b=e.target.closest?.(SEL); if(!b||b.contains(e.relatedTarget)) return; clearInterval(timers.get(b)); timers.delete(b); });
-  document.addEventListener('focusin',e=>{ const b=e.target.closest?.(SEL); if(b) burst(b,20); }); })();
+// ---------- v5.5 click burst on EVERY button: soft sci-fi holographic shards (replaces the v5.2 AUTO GEN hover burst) ----------
+(function clickFx(){ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const st=document.createElement('style'); st.textContent=`.mgx{position:fixed;left:0;top:0;pointer-events:none;z-index:2147483000;will-change:transform,opacity,filter}
+.mgx-ring{position:fixed;left:0;top:0;pointer-events:none;z-index:2147483000;border-radius:50%;border:1.5px solid #93c5fd;box-shadow:0 0 10px #a5b4fccc,inset 0 0 8px #e9d5ffaa}`; document.head.appendChild(st);
+  const COL=['#e0f7ff','#bae6fd','#c7d2fe','#e9d5ff','#f5f3ff','#a5f3fc','#ccfbf1'];
+  function burst(b,ev){ if(RM()) return; const r=b.getBoundingClientRect(); const ox=ev&&ev.clientX?ev.clientX:r.left+r.width/2, oy=ev&&ev.clientY?ev.clientY:r.top+r.height/2;
+    const ring=document.createElement('i'); ring.className='mgx-ring'; document.body.appendChild(ring);
+    ring.animate([{transform:`translate(${ox-6}px,${oy-6}px) scale(1)`,width:'12px',height:'12px',opacity:.9},{transform:`translate(${ox-6}px,${oy-6}px) scale(9)`,width:'12px',height:'12px',opacity:0}],{duration:750,easing:'ease-out'}).onfinish=()=>ring.remove();
+    const n=22; for(let i=0;i<n;i++){ const p=document.createElement('i'); p.className='mgx'; const c=COL[i%COL.length]; const kind=i%3;
+      const w=kind===0?2:(kind===1?4+Math.random()*4:6), h=kind===0?12+Math.random()*14:(kind===1?4+Math.random()*4:6);
+      p.style.cssText=`width:${w}px;height:${h}px;background:${c};opacity:.9;box-shadow:0 0 0 1px #7dd3fcaa,0 0 6px ${c},0 0 12px #a5b4fccc;${kind===2?'clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);':''}border-radius:${kind===1?'1px':'0'}`;
+      document.body.appendChild(p); const ang=(i/n)*Math.PI*2+(Math.random()-.5)*.5, d=50+Math.random()*90, rot=ang*180/Math.PI+90+(Math.random()-.5)*60;
+      const ex=ox+Math.cos(ang)*d, ey=oy+Math.sin(ang)*d-8, r2=rot+(Math.random()-.5)*180;
+      p.animate([{transform:`translate(${ox}px,${oy}px) rotate(${rot}deg) scale(.6)`,opacity:0,filter:'blur(0)',easing:'cubic-bezier(.2,.8,.3,1)'},
+        {transform:`translate(${ox+Math.cos(ang)*d*.55}px,${oy+Math.sin(ang)*d*.55}px) rotate(${rot}deg) scale(1.05)`,opacity:1,filter:'blur(0)',offset:.3,easing:'ease-out'},
+        {transform:`translate(${ox+Math.cos(ang)*d*.85}px,${oy+Math.sin(ang)*d*.85-4}px) rotate(${(rot+r2)/2}deg) scale(.8)`,opacity:.85,filter:'blur(.5px)',offset:.65,easing:'ease-in'},
+        {transform:`translate(${ex}px,${ey}px) rotate(${r2}deg) scale(.3)`,opacity:0,filter:'blur(3px)'}],{duration:850+Math.random()*450,easing:'linear'}).onfinish=()=>p.remove(); } }
+  document.addEventListener('pointerdown',e=>{ const b=e.target.closest?.('button'); if(b&&!b.disabled) burst(b,e); },true);
+  document.addEventListener('click',e=>{ if(e.detail!==0) return; const b=e.target.closest?.('button'); if(b&&!b.disabled) burst(b,null); },true); })();
 
 // ---------- v5.3 every command button: hover -> colour shift, blink, lift up, stand out, text pops ----------
-(function btnFx(){ const st=document.createElement('style'); const B='button:not(.mega):not(#suAuto):not(:disabled):not(.am-orb):not(.mx button)';
+(function btnFx(){ const st=document.createElement('style'); const B='button:not(:disabled):not(.am-orb):not(.mx button)';
   st.textContent=`button{transition:translate .22s cubic-bezier(.2,1.6,.4,1),scale .22s cubic-bezier(.2,1.6,.4,1),box-shadow .2s,background .2s,color .2s,border-color .2s}
 ${B}:hover,${B}:focus-visible{translate:0 -4px;scale:1.06;position:relative;z-index:4;color:#fff!important;border-color:#c4b5fd!important;
   background:linear-gradient(135deg,#0891b2,#7c3aed 55%,#db2777)!important;background-size:200% 200%!important;

@@ -608,6 +608,10 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
 .mx-ln{display:flex;gap:8px;white-space:nowrap;overflow:hidden}.mx-ln .t{flex:1;overflow:hidden;text-overflow:ellipsis}.mx-ln .b{color:#00ff66;letter-spacing:-1px}.mx-ln .c{animation:mxBlink .8s steps(1) infinite}
 .mx.done .mx-pc{color:#fff;font-size:34px}.mx.err .mx-box{border-color:#ff3355;box-shadow:0 0 40px #ff335588}.mx.err .mx-pc{color:#ffb3c0;text-shadow:0 0 18px #ff3355}
 @keyframes mxSpin{to{transform:rotate(360deg)}}@keyframes mxBlink{50%{opacity:0}}@keyframes mxFlick{0%,92%,100%{opacity:1}93%{opacity:.35}95%{opacity:1}97%{opacity:.6}}
+.mx.emb{transform:none!important;width:auto;mix-blend-mode:screen;transition:opacity .4s}.mx.emb.on{opacity:.62}.mx.emb.out{opacity:0;filter:none}
+.mx.emb .mx-box{height:100%;background:transparent;border:0;box-shadow:none;border-radius:0}.mx.emb .mx-box canvas{opacity:.28}
+.mx.emb .mx-in{height:100%;align-items:flex-end;justify-content:flex-start;padding:28px 34px 34px}.mx.emb .mx-core{width:96px;height:96px;background:transparent;box-shadow:none;opacity:.7}
+.mx.emb .mx-pc{font-size:24px}.mx.emb .mx-ai{bottom:16px;font-size:8px;letter-spacing:3px}.mx.emb .mx-ttl{font-size:10.5px;opacity:.7;margin-top:6px}.mx.emb .mx-lines{font-size:11.5px;opacity:.8;margin-top:auto}
 @media (prefers-reduced-motion:reduce){.mx,.mx *{animation:none!important;transition:none!important}}`; document.head.appendChild(st);
   const el=document.createElement('div'); el.className='mx'; el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
   el.innerHTML=`<div class="mx-box"><canvas aria-hidden="true"></canvas><div class="mx-in"><div class="mx-core" style="--p:0"><span class="mx-pc">0%</span><span class="mx-ai">AI CORE</span></div><div class="mx-ttl">&gt; SYSTEM PROCESSING_</div><div class="mx-lines"></div></div></div>`; document.body.appendChild(el);
@@ -630,7 +634,9 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
     return out; }
   let showing=false, lastFail=false, hideT=0;
   const bar=p=>p==null?'[ ~~~~~~~~ ]':'['+'█'.repeat(Math.round(p/10))+'░'.repeat(10-Math.round(p/10))+']';
-  function tick(){ const S=sources();
+  function host(){ const h=document.querySelector('#progModal.on #holo'); if(!h) return null; const r=h.getBoundingClientRect(); return r.width>40&&r.height>40?r:null; }
+  function dock(){ const r=host(); if(r){ el.classList.add('emb'); Object.assign(el.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'}); } else if(el.classList.contains('emb')){ el.classList.remove('emb'); el.style.cssText=''; } }
+  function tick(){ dock(); const S=sources();
     if(S.length){ clearTimeout(hideT); el.classList.remove('out','done','err'); if(!showing){ showing=true; el.classList.add('on'); typed.clear(); cancelAnimationFrame(raf); clearTimeout(raf); if(!RM()) rain(); }
       const ps=S.filter(s=>s.pct!=null); const tot=S.find(s=>s.key==='cc')?.pct ?? (ps.length?Math.round(ps.reduce((a,s)=>a+s.pct,0)/ps.length):null);
       el.querySelector('.mx-core').style.setProperty('--p',tot??((Date.now()/40)%100)); el.querySelector('.mx-pc').textContent=tot!=null?tot+'%':'···';

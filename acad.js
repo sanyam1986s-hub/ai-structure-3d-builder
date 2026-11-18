@@ -577,6 +577,20 @@ function paintReports(){ const box=$('#tmReports'); if(!box) return; const col={
   ORDER.forEach(id=>{ const box=tab.querySelector(`[data-sk="${id}"]`); if(TEAMS[id].skill.paint!==undefined||TEAMS[id].skill.key) skillUI(TEAMS[id].skill,box); else box.innerHTML='<div class="status">ใช้ Skill เขียนแบบในแท็บ AutoCAD 2D (สอน/พัฒนา/ย้อนเวอร์ชันได้ที่นั่น)</div>'; });
   tab.querySelectorAll('[data-run]').forEach(b=>b.onclick=()=>runTeam(b.dataset.run)); $('#tmAll').onclick=runAll; paintReports(); })();
 
+// ---------- v5.3 track EVERY AI call in the app (any command that uses AI shows on the AI CORE display) ----------
+const AICALLS=new Map(); let aiCallN=0;
+function aiLabel(p){ const s=String(p||''); const R=[[/calculation checker/i,'ตรวจรายการคำนวณ'],[/architectural drafter/i,'อ่านแบบสถาปัตย์'],[/BOQ checker/i,'ตรวจ BOQ'],[/project director/i,'รวมรายงานระบบ'],[/structural drafter/i,'วางแผนเขียนแบบโครงสร้าง'],[/maintain(s)? (the )?(embedded )?(AutoCAD )?.*skill|Improve the skill|Turn it into 1-3/i,'พัฒนา / สรุปบทเรียน Skill'],
+    [/BOQ|ปร\.4|unit price|quantity take|ถอดปริมาณ|ราคา/i,'ถอดปริมาณ BOQ + ราคา'],[/verif|re-?check|round \d|ตรวจย้อน|compare.*model/i,'ตรวจย้อนกลับโมเดลกับแบบ'],[/edit|instruction|คำสั่ง|modify|change the model/i,'แก้ไขโมเดลตามคำสั่ง'],[/document|inspect|summar/i,'ตรวจ/สรุปเอกสารแบบ'],[/extract|drawing|grid|level|structural/i,'อ่านแบบ → สร้างโมเดล']];
+  for(const [re,l] of R) if(re.test(s)) return l; return 'ประมวลผล'; }
+function wrapSample(orig){ if(!orig||orig.__ai3dWrapped) return orig; const w={__ai3dWrapped:true,__orig:orig}; const names=new Set([...Object.getOwnPropertyNames(orig),...Object.getOwnPropertyNames(Object.getPrototypeOf(orig)||{})].filter(k=>k!=='constructor'));
+  for(const k of names){ const v=orig[k]; if(typeof v!=='function'){ w[k]=v; continue; } if(/^(limits|cancel|abort)$/.test(k)){ w[k]=(...a)=>v.apply(orig,a); continue; }
+    w[k]=(...args)=>{ const id=++aiCallN; const p0=typeof args[0]==='string'?args[0]:(()=>{ try{ return JSON.stringify(args[0]).slice(0,4000); }catch(e){ return ''; } })(); let o=args[1];
+      const rec={id,kind:k,label:aiLabel(p0),t0:Date.now(),chunks:0,imgs:Array.isArray(o?.images)?o.images.length:0}; AICALLS.set(id,rec);
+      if(o&&typeof o==='object'&&typeof o.onText==='function'){ const ot=o.onText; o={...o,onText:(...a)=>{ rec.chunks++; return ot(...a); }}; args[1]=o; }
+      let r; try{ r=v.apply(orig,args); }catch(e){ AICALLS.delete(id); throw e; }
+      return Promise.resolve(r).then(x=>{ AICALLS.delete(id); return x; },e=>{ AICALLS.delete(id); rec.err=true; TB.lastErr=Date.now(); throw e; }); }; }
+  return w; }
+setInterval(()=>{ try{ const s=AI.sampleFn; if(s&&!s.__ai3dWrapped) AI.sampleFn=wrapSample(s); }catch(e){} },400);
 // ---------- AI working display: big centre-screen core + Matrix-style status (v5.1) ----------
 const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
   const st=document.createElement('style'); st.textContent=`.mx{position:fixed;left:50%;top:50%;z-index:97;width:min(560px,92vw);transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.5,.4,1),opacity .3s}
@@ -612,6 +626,7 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
     for(const id of Object.keys(LB)){ const r=REP[id]; if(r&&r.status==='run'){ const cur=r.sub.find(x=>x.s==='run'); put(id,LB[id],r.pct,`${cur?cur.n:'กำลังทำงาน'}${cur?.d?' :: '+String(cur.d).slice(0,60):''}`); } }
     if(TB.cc){ const ids=TB.cc; const p=Math.round(ids.reduce((a,id)=>a+(REP[id]?.pct||0),0)/Math.max(1,ids.length)); put('cc','COMMAND_CENTER',p,TB.ccMsg||'ทีม AI ทำงานพร้อมกัน'); }
     if(AM.busy) put('am','AGENT',null,AM.busy);
+    for(const r of AICALLS.values()){ const sec=((Date.now()-r.t0)/1000).toFixed(0); put('call'+r.id,'AI_CALL#'+r.id,null,`${r.label} · ${sec}s${r.imgs?' · ภาพ '+r.imgs:''}${r.chunks?' · รับข้อมูล '+r.chunks:' · รอคำตอบ'}`); }
     return out; }
   let showing=false, lastFail=false, hideT=0;
   const bar=p=>p==null?'[ ~~~~~~~~ ]':'['+'█'.repeat(Math.round(p/10))+'░'.repeat(10-Math.round(p/10))+']';
@@ -620,11 +635,11 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
       const ps=S.filter(s=>s.pct!=null); const tot=S.find(s=>s.key==='cc')?.pct ?? (ps.length?Math.round(ps.reduce((a,s)=>a+s.pct,0)/ps.length):null);
       el.querySelector('.mx-core').style.setProperty('--p',tot??((Date.now()/40)%100)); el.querySelector('.mx-pc').textContent=tot!=null?tot+'%':'···';
       el.querySelector('.mx-ttl').textContent=`> ${S.length>1?S.length+' AI PROCESSES':'AI PROCESS'} RUNNING_`;
-      el.querySelector('.mx-lines').innerHTML=S.slice(0,7).map(s=>{ const full=`${s.label} :: ${s.msg}`; let t=typed.get(s.key); if(!t||t.full!==full){ t={full,n:t&&full.startsWith(t.full.slice(0,t.n))?t.n:0}; typed.set(s.key,t); } t.n=RM()?full.length:Math.min(full.length,t.n+4);
+      el.querySelector('.mx-lines').innerHTML=S.slice(0,7).map(s=>{ const full=`${s.label} :: ${s.msg}`; let t=typed.get(s.key); if(!t){ t={n:0}; typed.set(s.key,t); } t.n=RM()?full.length:Math.min(full.length,t.n+4);
         return `<div class="mx-ln"><span>&gt;</span><span class="t">${esc(full.slice(0,t.n))}${t.n<full.length?'<span class="c">█</span>':''}</span><span class="b">${bar(s.pct)}</span><span>${s.pct!=null?String(s.pct).padStart(3)+'%':'RUN'}</span></div>`; }).join('');
       el.setAttribute('aria-label','AI กำลังทำงาน '+S.map(s=>`${s.label} ${s.pct??''} ${s.msg}`).join('; '));
-      lastFail=Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000); }
-    else if(showing){ showing=false; const fail=lastFail||Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000);
+      lastFail=Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000)||(Date.now()-(TB.lastErr||0)<4000); }
+    else if(showing){ showing=false; const fail=lastFail||(Date.now()-(TB.lastErr||0)<2000)||Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000);
       el.classList.add(fail?'err':'done'); el.querySelector('.mx-core').style.setProperty('--p',100); el.querySelector('.mx-pc').textContent=fail?'ERROR':'COMPLETE';
       el.querySelector('.mx-ttl').textContent=fail?'> PROCESS TERMINATED WITH ERRORS_':'> ALL AI PROCESSES COMPLETE_';
       hideT=setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>{ el.classList.remove('on','out','done','err'); cancelAnimationFrame(raf); clearTimeout(raf); },520); },650); } }
@@ -648,5 +663,18 @@ ${SEL.split(',').map(s=>s+':hover,'+s+':focus-visible').join(',')}{scale:1.14;fi
   document.addEventListener('pointerover',e=>{ const b=e.target.closest?.(SEL); if(!b||timers.has(b)||b.disabled) return; burst(b,34); timers.set(b,setInterval(()=>{ if(b.matches(':hover')) burst(b,10); else { clearInterval(timers.get(b)); timers.delete(b); } },420)); });
   document.addEventListener('pointerout',e=>{ const b=e.target.closest?.(SEL); if(!b||b.contains(e.relatedTarget)) return; clearInterval(timers.get(b)); timers.delete(b); });
   document.addEventListener('focusin',e=>{ const b=e.target.closest?.(SEL); if(b) burst(b,20); }); })();
+
+// ---------- v5.3 every command button: hover -> colour shift, blink, lift up, stand out, text pops ----------
+(function btnFx(){ const st=document.createElement('style'); const B='button:not(.mega):not(#suAuto):not(:disabled):not(.am-orb):not(.mx button)';
+  st.textContent=`button{transition:translate .22s cubic-bezier(.2,1.6,.4,1),scale .22s cubic-bezier(.2,1.6,.4,1),box-shadow .2s,background .2s,color .2s,border-color .2s}
+${B}:hover,${B}:focus-visible{translate:0 -4px;scale:1.06;position:relative;z-index:4;color:#fff!important;border-color:#c4b5fd!important;
+  background:linear-gradient(135deg,#0891b2,#7c3aed 55%,#db2777)!important;background-size:200% 200%!important;
+  box-shadow:0 8px 18px #7c3aed66,0 0 0 2px #a78bfa88,0 0 22px #22d3ee88!important;text-shadow:0 0 6px #fff,0 0 14px #67e8f9;font-weight:700;letter-spacing:.3px;
+  animation:btnHue 1.6s linear infinite,btnBlink .9s steps(2) infinite}
+${B}:active{translate:0 -1px;scale:.98}
+@keyframes btnHue{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes btnBlink{0%{filter:brightness(1.05)}50%{filter:brightness(1.35) saturate(1.3)}}
+@media (prefers-reduced-motion:reduce){${B}:hover,${B}:focus-visible{animation:none;translate:none;scale:none}}`;
+  document.head.appendChild(st); })();
 
 })();

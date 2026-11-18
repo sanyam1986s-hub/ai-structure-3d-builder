@@ -577,43 +577,58 @@ function paintReports(){ const box=$('#tmReports'); if(!box) return; const col={
   ORDER.forEach(id=>{ const box=tab.querySelector(`[data-sk="${id}"]`); if(TEAMS[id].skill.paint!==undefined||TEAMS[id].skill.key) skillUI(TEAMS[id].skill,box); else box.innerHTML='<div class="status">ใช้ Skill เขียนแบบในแท็บ AutoCAD 2D (สอน/พัฒนา/ย้อนเวอร์ชันได้ที่นั่น)</div>'; });
   tab.querySelectorAll('[data-run]').forEach(b=>b.onclick=()=>runTeam(b.dataset.run)); $('#tmAll').onclick=runAll; paintReports(); })();
 
-// ---------- AI working badges on each tab: pop up with % + status while AI works, pop out when done ----------
-const TB=(()=>{ const layer=document.createElement('div'); layer.className='tbb-layer'; layer.setAttribute('aria-live','polite'); document.body.appendChild(layer);
-  const st=document.createElement('style'); st.textContent=`.tbb-layer{position:fixed;inset:0;pointer-events:none;z-index:97}
-.tbb{position:fixed;pointer-events:auto;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,0);animation:tbbIn .35s cubic-bezier(.2,1.6,.4,1)}
-.tbb .pill{display:flex;align-items:center;gap:5px;padding:2px 8px 2px 3px;border-radius:999px;font:700 11.5px var(--f-mono,monospace);color:#fff;background:linear-gradient(90deg,#0891b2,#7c3aed,#db2777);background-size:200% 100%;box-shadow:0 0 12px #22d3ee,0 0 24px #7c3aed88;animation:tbbShine 2s linear infinite}
-.tbb .orb{width:16px;height:16px;border-radius:50%;background:conic-gradient(#67e8f9,#a78bfa,#f0abfc,#67e8f9);box-shadow:0 0 8px #fff;animation:tbbSpin 1s linear infinite}
-.tbb .msg{margin-top:3px;max-width:190px;padding:2px 7px;border-radius:7px;font-size:10.5px;line-height:1.3;color:#e0fbff;background:#020617e6;border:1px solid #22d3ee66;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tbb.done .pill{background:#16a34a;box-shadow:0 0 16px #22c55e}.tbb.err .pill{background:#dc2626;box-shadow:0 0 16px #ef4444}.tbb.done .orb,.tbb.err .orb{animation:none;background:#fff}
-.tbb.out{animation:tbbOut .55s ease-in forwards}
-@keyframes tbbIn{from{transform:translate(-50%,8px) scale(.2);opacity:0}to{transform:translate(-50%,0) scale(1);opacity:1}}
-@keyframes tbbOut{30%{transform:translate(-50%,-4px) scale(1.25);opacity:1}100%{transform:translate(-50%,-18px) scale(.1);opacity:0}}
-@keyframes tbbSpin{to{transform:rotate(360deg)}}@keyframes tbbShine{to{background-position:200% 0}}
-@media (prefers-reduced-motion:reduce){.tbb,.tbb *{animation:none!important}}`; document.head.appendChild(st);
-  const live=new Map(); // tab -> element
+// ---------- AI working display: big centre-screen core + Matrix-style status (v5.1) ----------
+const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const st=document.createElement('style'); st.textContent=`.mx{position:fixed;left:50%;top:50%;z-index:97;width:min(560px,92vw);transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.2,1.5,.4,1),opacity .3s}
+.mx.on{transform:translate(-50%,-50%) scale(1);opacity:1}.mx.out{transform:translate(-50%,-50%) scale(1.6);opacity:0;filter:blur(6px);transition:transform .5s ease-in,opacity .5s,filter .5s}
+.mx-box{position:relative;border-radius:22px;overflow:hidden;background:#000000f2;border:1px solid #00ff6688;box-shadow:0 0 30px #00ff6655,0 0 90px #00ff6622,inset 0 0 40px #00ff6622}
+.mx-box canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.mx-in{position:relative;display:flex;flex-direction:column;align-items:center;padding:22px 20px 16px}
+.mx-core{width:170px;height:170px;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle,#003314 0%,#000 70%);box-shadow:0 0 40px #00ff66aa,inset 0 0 30px #00ff6655}
+.mx-core::before{content:"";position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(#00ff66 calc(var(--p)*1%),#003b18 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 0);mask:radial-gradient(farthest-side,transparent calc(100% - 7px),#000 0);filter:drop-shadow(0 0 8px #00ff66)}
+.mx-core::after{content:"";position:absolute;inset:14px;border-radius:50%;border:1px dashed #00ff6688;animation:mxSpin 6s linear infinite}
+.mx-pc{font:700 44px/1 "Consolas","Courier New",monospace;color:#b7ffcf;text-shadow:0 0 6px #00ff66,0 0 18px #00ff66,0 0 40px #00ff66;letter-spacing:2px;animation:mxFlick 2.4s infinite}
+.mx-ai{position:absolute;bottom:34px;font:700 11px "Consolas",monospace;letter-spacing:5px;color:#00ff66;text-shadow:0 0 8px #00ff66}
+.mx-ttl{margin-top:12px;font:700 13px "Consolas","Courier New",monospace;letter-spacing:4px;color:#00ff66;text-shadow:0 0 10px #00ff66}
+.mx-lines{width:100%;margin-top:10px;font:13px/1.55 "Consolas","Courier New",monospace;color:#7dffa8;text-shadow:0 0 6px #00ff66;min-height:40px}
+.mx-ln{display:flex;gap:8px;white-space:nowrap;overflow:hidden}.mx-ln .t{flex:1;overflow:hidden;text-overflow:ellipsis}.mx-ln .b{color:#00ff66;letter-spacing:-1px}.mx-ln .c{animation:mxBlink .8s steps(1) infinite}
+.mx.done .mx-pc{color:#fff;font-size:34px}.mx.err .mx-box{border-color:#ff3355;box-shadow:0 0 40px #ff335588}.mx.err .mx-pc{color:#ffb3c0;text-shadow:0 0 18px #ff3355}
+@keyframes mxSpin{to{transform:rotate(360deg)}}@keyframes mxBlink{50%{opacity:0}}@keyframes mxFlick{0%,92%,100%{opacity:1}93%{opacity:.35}95%{opacity:1}97%{opacity:.6}}
+@media (prefers-reduced-motion:reduce){.mx,.mx *{animation:none!important;transition:none!important}}`; document.head.appendChild(st);
+  const el=document.createElement('div'); el.className='mx'; el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+  el.innerHTML=`<div class="mx-box"><canvas aria-hidden="true"></canvas><div class="mx-in"><div class="mx-core" style="--p:0"><span class="mx-pc">0%</span><span class="mx-ai">AI CORE</span></div><div class="mx-ttl">&gt; SYSTEM PROCESSING_</div><div class="mx-lines"></div></div></div>`; document.body.appendChild(el);
+  const cv=el.querySelector('canvas'), g=cv.getContext('2d'); const CH='アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEFกขคงจฉชซญฎดตถทนบปผพฟมยรลวศสหอฮ'; let drops=[], raf=0;
+  function rain(){ const w=cv.width=cv.clientWidth, h=cv.height=cv.clientHeight, fs=14, cols=Math.ceil(w/fs); if(drops.length!==cols) drops=Array.from({length:cols},()=>Math.random()*-40);
+    g.fillStyle='rgba(0,0,0,0.12)'; g.fillRect(0,0,w,h); g.font=fs+'px monospace';
+    for(let i=0;i<cols;i++){ const y=drops[i]*fs; g.fillStyle=Math.random()<.06?'#e6ffee':'#00ff66'; g.fillText(CH[Math.floor(Math.random()*CH.length)],i*fs,y); if(y>h&&Math.random()>.975) drops[i]=0; drops[i]+=0.55; }
+    if(el.classList.contains('on')&&!RM()) raf=setTimeout(()=>requestAnimationFrame(rain),45); }
+  const typed=new Map(); // key -> {full, n}
   const txt=q=>(document.querySelector(q)?.textContent||'').trim();
-  function sources(){ const out={}; const put=(tab,pct,msg,ok)=>{ const o=out[tab]; if(o){ o.n++; if(pct!=null) o.pct=o.pct==null?pct:Math.round((o.pct+pct)/2); o.msg=o.msg||msg; } else out[tab]={pct,msg,n:1}; };
-    // app AI: Auto Gen progress HUD
-    const ps=txt('#pgState'), pp=parseInt(txt('#pgPct'))||0, pm=document.getElementById('progModal'); if(ps&&!/^(พร้อม|เสร็จสมบูรณ์|หยุด \/ ผิดพลาด|กำลังเตรียม)$/.test(ps)&&((pp>0&&pp<100)||pm?.classList.contains('on'))) put('sum',pp,'Auto Gen: '+ps);
-    // app AI: chat edit
-    const cs=txt('#chSend'); if(cs==='หยุด'||cs==='รอยืนยัน…') put('chat',null,txt('#chStatus')||(cs==='หยุด'?'AI กำลังแก้โมเดล…':'รอยืนยันการแก้ไข'));
-    // app AI: detailed QTO + pricing
-    if(txt('#qAI')==='หยุด') put('qto',null,txt('#qStatus')||'AI กำลังถอด BOQ + ราคา…');
-    // AI teams
-    const map={calc:'calc',sdraw:'acad',arch:'acad',boq:'qto'};
-    for(const id of Object.keys(map)){ const r=REP[id]; if(r&&r.status==='run'){ const cur=r.sub.find(x=>x.s==='run'); put(map[id],r.pct,`${r.icon} ${cur?cur.n:'กำลังทำงาน'}`); } }
-    if(TB.cc){ const ids=TB.cc; const p=Math.round(ids.reduce((a,id)=>a+(REP[id]?.pct||0),0)/Math.max(1,ids.length)); const runN=ids.filter(id=>REP[id]?.status==='run'); put('agents',TB.ccDone?100:p,TB.ccMsg||(runN.length?runN.map(id=>TEAMS[id].icon).join(' ')+' กำลังทำงาน':'🧠 รวมรายงานระบบ')); }
-    if(AM.busy) put(AM.busyTab||'acad',null,AM.busy);
+  function sources(){ const out=[]; const put=(key,label,pct,msg)=>out.push({key,label,pct,msg});
+    const ps=txt('#pgState'), pp=parseInt(txt('#pgPct'))||0, pm=document.getElementById('progModal'); if(ps&&!/^(พร้อม|เสร็จสมบูรณ์|หยุด \/ ผิดพลาด|กำลังเตรียม)$/.test(ps)&&((pp>0&&pp<100)||pm?.classList.contains('on'))) put('gen','AUTO_GEN',pp,ps);
+    const cs=txt('#chSend'); if(cs==='หยุด'||cs==='รอยืนยัน…') put('chat','AI_EDIT',null,txt('#chStatus')||(cs==='หยุด'?'AI กำลังแก้โมเดล':'รอยืนยันการแก้ไข'));
+    if(txt('#qAI')==='หยุด') put('qai','BOQ_AI',null,txt('#qStatus')||'AI กำลังถอด BOQ + ราคา');
+    const LB={calc:'CALC',sdraw:'S_DRAW',arch:'A_DRAW',boq:'BOQ'};
+    for(const id of Object.keys(LB)){ const r=REP[id]; if(r&&r.status==='run'){ const cur=r.sub.find(x=>x.s==='run'); put(id,LB[id],r.pct,`${cur?cur.n:'กำลังทำงาน'}${cur?.d?' :: '+String(cur.d).slice(0,60):''}`); } }
+    if(TB.cc){ const ids=TB.cc; const p=Math.round(ids.reduce((a,id)=>a+(REP[id]?.pct||0),0)/Math.max(1,ids.length)); put('cc','COMMAND_CENTER',p,TB.ccMsg||'ทีม AI ทำงานพร้อมกัน'); }
+    if(AM.busy) put('am','AGENT',null,AM.busy);
     return out; }
-  function place(el,tab){ const b=document.querySelector(`.tabs button[data-tab="${tab}"]`); if(!b){ el.style.display='none'; return; } const r=b.getBoundingClientRect(); if(!r.width){ el.style.display='none'; return; } el.style.display=''; el.style.left=(r.left+r.width/2)+'px'; el.style.top=(r.top-10)+'px'; }
+  let showing=false, lastFail=false, hideT=0;
+  const bar=p=>p==null?'[ ~~~~~~~~ ]':'['+'█'.repeat(Math.round(p/10))+'░'.repeat(10-Math.round(p/10))+']';
   function tick(){ const S=sources();
-    for(const [tab,s] of Object.entries(S)){ let el=live.get(tab); if(!el||el.dataset.fin){ el=document.createElement('div'); el.className='tbb'; el.innerHTML='<div class="pill"><span class="orb" aria-hidden="true"></span><span class="pc"></span></div><div class="msg"></div>'; el.title=''; layer.appendChild(el); live.set(tab,el); el.onclick=()=>document.querySelector(`.tabs button[data-tab="${tab}"]`)?.click(); }
-      el.querySelector('.pc').textContent=s.pct!=null?`AI ${s.pct}%`:'AI ทำงาน'; el.querySelector('.msg').textContent=s.msg||''; el.setAttribute('aria-label',`AI กำลังทำงานในแท็บนี้ ${s.pct!=null?s.pct+'%':''} ${s.msg||''}`); el.title=s.msg||''; place(el,tab); }
-    for(const [tab,el] of [...live]){ if(S[tab]||el.dataset.fin) continue; el.dataset.fin='1'; // finished -> pop out immediately
-      const failed=Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-r.end<3000&&({calc:'calc',sdraw:'acad',arch:'acad',boq:'qto'})[Object.keys(REP).find(k=>REP[k]===r)]===tab);
-      el.classList.add(failed?'err':'done'); el.querySelector('.pc').textContent=failed?'✖ ผิดพลาด':'✔ เสร็จ'; el.querySelector('.msg')?.remove(); place(el,tab);
-      setTimeout(()=>el.classList.add('out'),250); setTimeout(()=>{ el.remove(); if(live.get(tab)===el) live.delete(tab); },900); } }
-  setInterval(tick,300); addEventListener('resize',tick); document.addEventListener('scroll',tick,true);
+    if(S.length){ clearTimeout(hideT); el.classList.remove('out','done','err'); if(!showing){ showing=true; el.classList.add('on'); typed.clear(); cancelAnimationFrame(raf); clearTimeout(raf); if(!RM()) rain(); }
+      const ps=S.filter(s=>s.pct!=null); const tot=S.find(s=>s.key==='cc')?.pct ?? (ps.length?Math.round(ps.reduce((a,s)=>a+s.pct,0)/ps.length):null);
+      el.querySelector('.mx-core').style.setProperty('--p',tot??((Date.now()/40)%100)); el.querySelector('.mx-pc').textContent=tot!=null?tot+'%':'···';
+      el.querySelector('.mx-ttl').textContent=`> ${S.length>1?S.length+' AI PROCESSES':'AI PROCESS'} RUNNING_`;
+      el.querySelector('.mx-lines').innerHTML=S.slice(0,7).map(s=>{ const full=`${s.label} :: ${s.msg}`; let t=typed.get(s.key); if(!t||t.full!==full){ t={full,n:t&&full.startsWith(t.full.slice(0,t.n))?t.n:0}; typed.set(s.key,t); } t.n=RM()?full.length:Math.min(full.length,t.n+4);
+        return `<div class="mx-ln"><span>&gt;</span><span class="t">${esc(full.slice(0,t.n))}${t.n<full.length?'<span class="c">█</span>':''}</span><span class="b">${bar(s.pct)}</span><span>${s.pct!=null?String(s.pct).padStart(3)+'%':'RUN'}</span></div>`; }).join('');
+      el.setAttribute('aria-label','AI กำลังทำงาน '+S.map(s=>`${s.label} ${s.pct??''} ${s.msg}`).join('; '));
+      lastFail=Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000); }
+    else if(showing){ showing=false; const fail=lastFail||Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-(r.end||0)<4000);
+      el.classList.add(fail?'err':'done'); el.querySelector('.mx-core').style.setProperty('--p',100); el.querySelector('.mx-pc').textContent=fail?'ERROR':'COMPLETE';
+      el.querySelector('.mx-ttl').textContent=fail?'> PROCESS TERMINATED WITH ERRORS_':'> ALL AI PROCESSES COMPLETE_';
+      hideT=setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>{ el.classList.remove('on','out','done','err'); cancelAnimationFrame(raf); clearTimeout(raf); },520); },650); } }
+  setInterval(tick,250);
   return {cc:null,ccDone:false,ccMsg:''}; })();
 
 })();

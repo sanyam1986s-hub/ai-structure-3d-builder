@@ -1,0 +1,695 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>คู่มือ AI Structure 3D Builder v5.7</title><style>
+@page{size:A4;margin:14mm 12mm 16mm}
+body{font-family:Loma,Tahoma,'Noto Sans Thai',sans-serif;color:#0f172a;font-size:13.5px;line-height:1.6;max-width:980px;margin:0 auto;padding:18px}
+h1{font-size:26px;border-bottom:3px solid #2563eb;padding-bottom:8px;margin:0 0 6px}
+.meta{color:#475569;font-size:12.5px;margin-bottom:12px}
+h2{font-size:20px;color:#1e3a8a;border-left:6px solid #2563eb;padding-left:10px;margin:26px 0 10px;break-after:avoid}
+table{border-collapse:collapse;width:100%;margin:8px 0 14px;font-size:12.5px;break-inside:auto}
+th{background:#1e3a8a;color:#fff;text-align:left;padding:6px 8px}
+td{border-bottom:1px solid #e2e8f0;padding:5px 8px;vertical-align:top}
+tr:nth-child(even) td{background:#f8fafc}
+tr{break-inside:avoid}
+img{max-width:100%;border:1px solid #cbd5e1;border-radius:8px}
+figure{margin:10px 0 16px;text-align:center;break-inside:avoid}
+figcaption{font-size:12px;color:#475569;margin-top:4px}
+.row{display:flex;gap:8px;margin:8px 0 14px;break-inside:avoid}
+.row img{width:32%;max-height:560px;object-fit:cover;object-position:top}
+.toc{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:12px 0}
+.toc ol{columns:2;margin:6px 0 0;padding-left:20px}
+.toc a{color:#1d4ed8;text-decoration:none}
+ol li,ul li{margin:3px 0}
+.dl{float:right;background:#2563eb;color:#fff;padding:6px 12px;border-radius:8px;text-decoration:none;font-size:13px}
+@media print{.dl{display:none}body{max-width:none;padding:0}}
+</style></head><body><a class="dl" href="AI3D_Manual_v5.7.pdf" download>⬇ ดาวน์โหลด PDF</a><h1>คู่มือการใช้งาน AI Structure 3D Builder v5.7</h1><div class="meta">เวอร์ชัน 5.7 · 2026-11-19 · มาตรฐานอ้างอิง ACI 318 · AISC · AISI S100 · วสท. / มยผ.</div>
+<p>AI Structure 3D Builder อ่านแบบ (รูป / PDF / DXF) ด้วย AI แล้วสร้างโมเดลโครงสร้าง 3D (เหล็ก + คสล.) ออกแบบเบื้องต้นตาม ACI / AISC / AISI / วสท. ถอด BOQ แบบ ปร.4 เขียนแบบ 2D และส่งออกไป STAAD, ETABS, AutoCAD, SketchUp ได้ในที่เดียว คู่มือนี้อธิบายลำดับการใช้งาน ทุกปุ่มคำสั่ง และ AI แต่ละชุด พร้อมรูปประกอบ</p>
+<nav class="toc"><b>สารบัญ</b><ol><li><a href="#s1">ภาพรวมและลำดับการใช้งาน</a></li><li><a href="#s2">ส่วนประกอบหน้าจอ (ดูหมายเลขในรูป)</a></li><li><a href="#s3">เริ่มงาน: หน้าต่างเริ่มต้นและ ⚡ AUTO GEN</a></li><li><a href="#s4">แผงซ้าย: นำเข้าแบบและพารามิเตอร์</a></li><li><a href="#s5">มุมมอง 3D (Model)</a></li><li><a href="#s6">แท็บด้านขวา — แต่ละแท็บใช้ทำอะไร</a></li><li><a href="#s7">AI แต่ละตัว — ทำอะไร ใช้อย่างไร</a></li><li><a href="#s8">AI เขียนแบบใน AutoCAD โดยตรง (AutoCAD Agent)</a></li><li><a href="#s9">Skill ที่ฝังในโปรแกรม — เรียนรู้และพัฒนา</a></li><li><a href="#s10">การแสดงการทำงานของ AI</a></li><li><a href="#s11">ส่งออกไฟล์ (Export)</a></li><li><a href="#s12">ข้อควรระวังและแก้ปัญหา</a></li></ol></nav>
+<h2 id="s1">1. ภาพรวมและลำดับการใช้งาน</h2>
+<p>ทางที่เร็วที่สุด: อัปโหลดแบบ → ตรวจเอกสาร → กด ⚡ AUTO GEN → อ่านรายงาน → สั่งแก้ → Export ตามลูกศรด้านล่าง</p>
+<figure><img alt="ลำดับการใช้งานหลัก" src="img/flow_main.svg" /><figcaption>ลำดับการใช้งานหลัก</figcaption></figure>
+<p><strong>วิธีเปิดโปรแกรม (เลือกได้ 3 ทาง)</strong></p>
+<table>
+<thead>
+<tr>
+<th>ทาง</th>
+<th>ที่อยู่</th>
+<th>AI ทำงานไหม</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ใน Claude (แนะนำ)</td>
+<td>claude.ai/artifact/Aup32pTV7DDAuaRTFiHWtQ</td>
+<td>ได้ครบทุกฟังก์ชัน AI</td>
+</tr>
+<tr>
+<td>GitHub Pages</td>
+<td>sanyam1986s-hub.github.io/ai-structure-3d-builder</td>
+<td>คำนวณ / 3D / BOQ / Export ได้ · AI ให้กด 🚀 เข้า Claude</td>
+</tr>
+<tr>
+<td>ไฟล์ในเครื่อง</td>
+<td>D:\Claude_Project\Claude_สร้างโครงสร้างอัตโนมัต\AI_Structure_3D_Builder.html (วาง acad.js และโฟลเดอร์ manual ไว้ด้วยกัน)</td>
+<td>ใช้ offline ได้ ยกเว้น AI</td>
+</tr>
+</tbody>
+</table>
+<p>หน่วยในโปรแกรม: kgf, ksc (kgf/cm²), cm, m · ราคาเป็นบาท</p>
+<h2 id="s2">2. ส่วนประกอบหน้าจอ (ดูหมายเลขในรูป)</h2>
+<figure><img alt="หน้าจอหลักพร้อมหมายเลขปุ่ม" src="img/s_main_ann.jpg" /><figcaption>หน้าจอหลักพร้อมหมายเลขปุ่ม</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>เลข</th>
+<th>คำสั่ง / ส่วน</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>⚡ AUTO GEN (แถบบน)</td>
+<td>คลิกเดียวทำครบ: อ่านแบบ → 3D → ออกแบบ → แบบ 2D → BOQ → รายงาน</td>
+</tr>
+<tr>
+<td>2</td>
+<td>📖 วิธีใช้</td>
+<td>เปิดหน้าช่วยเหลือ + ปุ่ม 📘 คู่มือฉบับเต็ม (เอกสารนี้) และดาวน์โหลด PDF</td>
+</tr>
+<tr>
+<td>3</td>
+<td>เริ่มงานใหม่</td>
+<td>เปิดหน้าต่างเริ่มงาน เพื่ออัปโหลดแบบชุดใหม่</td>
+</tr>
+<tr>
+<td>4</td>
+<td>⚙ ตั้งค่า</td>
+<td>วัสดุ น้ำหนักบรรทุก ข้อมูลโครงการ หน่วย/มาตราส่วนแบบ ความละเอียด AI</td>
+</tr>
+<tr>
+<td>5</td>
+<td>◈ สถานะ / Hologram</td>
+<td>เปิดหน้าต่างสถานะงาน % และภาพ Hologram ลำดับการสร้าง</td>
+</tr>
+<tr>
+<td>6</td>
+<td>🛠 ตรวจสอบ / สั่งแก้</td>
+<td>รายการส่วนที่ขาด/ประเด็นค้าง → เลือกแล้วสั่ง AI แก้</td>
+</tr>
+<tr>
+<td>7</td>
+<td>📋 ตรวจสอบเอกสารแนบ</td>
+<td>ดูจำนวนหน้า ชนิดแผ่น เนื้อหา ก่อนให้ AI ทำงาน</td>
+</tr>
+<tr>
+<td>8</td>
+<td>⚡ AUTO GEN (แผงซ้าย)</td>
+<td>เหมือนข้อ 1 อยู่ใต้ช่องอัปโหลด</td>
+</tr>
+<tr>
+<td>9</td>
+<td>ให้ AI วิเคราะห์แบบและสร้างโมเดล 3D</td>
+<td>ทำเฉพาะขั้นอ่านแบบ + สร้างโมเดล (ไม่ทำแบบ 2D/BOQ)</td>
+</tr>
+<tr>
+<td>13</td>
+<td>ชั้นข้อมูล / Wireframe / Grid / ◈ Hologram</td>
+<td>เปิด-ปิดชนิดชิ้นส่วน เปลี่ยนการแสดงผล 3D</td>
+</tr>
+<tr>
+<td>14</td>
+<td>▶ จำลองการก่อสร้าง</td>
+<td>เล่นการก่อสร้างทีละชั้น (ฐานราก → เสา → คาน → พื้น → หลังคา)</td>
+</tr>
+<tr>
+<td>15</td>
+<td>แถบแท็บ</td>
+<td>สรุป · AI สั่งงาน · Calc Sheet · วัสดุ · BOQ · BOQ ละเอียด · แบบ 2D · AutoCAD 2D · AI Teams · Export · Skill</td>
+</tr>
+<tr>
+<td>16</td>
+<td>มุมมอง 3D</td>
+<td>ลากซ้าย = หมุน · ลากขวา = เลื่อน · ล้อเมาส์ = ซูม · คลิกชิ้นส่วน = ดูข้อมูล</td>
+</tr>
+<tr>
+<td>17</td>
+<td>แท็บผลลัพธ์</td>
+<td>แสดงผลของแท็บที่เลือก</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s3">3. เริ่มงาน: หน้าต่างเริ่มต้นและ ⚡ AUTO GEN</h2>
+<figure><img alt="หน้าต่างเริ่มสร้างโมเดล" src="img/s_01_start.jpg" /><figcaption>หน้าต่างเริ่มสร้างโมเดล</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>ลำดับ</th>
+<th>คำสั่ง / ปุ่ม</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>กล่อง "ลากไฟล์มาวาง"</td>
+<td>อัปโหลด JPG / PNG / PDF / DXF ได้หลายไฟล์ เช่น แปลน + รูปตัด + แบบหลังคา (DWG ให้ Save As DXF ก่อน)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ข้อมูลเพิ่มเติมสำหรับ AI</td>
+<td>พิมพ์สิ่งที่แบบไม่ชัด เช่น "โรงงาน 2 ชั้น หลังคา Truss เสาเหล็ก I-0.22"</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ระบบโครงสร้าง</td>
+<td>"ให้ AI เลือกจากแบบ" หรือบังคับ: อาคาร คสล. / คสล. + หลังคาเหล็ก / Portal Frame / โครงเหล็กหลายชั้น</td>
+</tr>
+<tr>
+<td>4</td>
+<td>📋 ตรวจสอบเอกสารแนบ</td>
+<td>ดูสรุป/ละเอียดทุกหน้า → ✦ ให้ AI อ่านเอกสาร → 💾 ส่งออก .md → ⚡ ยืนยัน + AUTO GEN</td>
+</tr>
+<tr>
+<td>5</td>
+<td>เลือก / ล็อกชนิดชิ้นส่วน</td>
+<td>ติ๊กเฉพาะชิ้นส่วนที่มีจริง แต่ละชนิดเลือกได้ "🤖 AI อัตโนมัติ" หรือ "✍ กำหนดเอง (AI ห้ามเปลี่ยน)"</td>
+</tr>
+<tr>
+<td>6</td>
+<td>⚙ ตั้งค่า</td>
+<td>กำลังวัสดุ น้ำหนักบรรทุก ราคา (ดูหัวข้อ 4)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>⚡ Auto Gen — วิเคราะห์ + สร้าง + ตรวจ</td>
+<td>เริ่มทำงานอัตโนมัติครบทุกขั้น (ใช้ AI)</td>
+</tr>
+<tr>
+<td>ทางเลือก</td>
+<td>🧱 อ่านแบบอัตโนมัติ (ไม่ใช้ AI)</td>
+<td>อ่านกริด/ผนัง/ช่องเปิดด้วยอัลกอริทึม Plan2BOQ ใช้ได้ตอน offline</td>
+</tr>
+<tr>
+<td>ทางเลือก</td>
+<td>↺ เปิดโครงการล่าสุด</td>
+<td>เปิดงานที่ทำค้างไว้</td>
+</tr>
+<tr>
+<td>ทางเลือก</td>
+<td>ปิด / ใช้โมเดลตัวอย่าง</td>
+<td>เปิดโมเดลตัวอย่าง (โรงงาน คสล. 2 ชั้น + หลังคาเหล็ก) ไว้ทดลอง</td>
+</tr>
+</tbody>
+</table>
+<p><strong>⚡ AUTO GEN ทำต่อเนื่องตามลูกศร</strong> — ระหว่างทำงานมีหน้าต่างสถานะแสดง % กด "หยุด" ได้ตลอด</p>
+<figure><img alt="AUTO GEN ทำอะไรบ้าง" src="img/flow_autogen.svg" /><figcaption>AUTO GEN ทำอะไรบ้าง</figcaption></figure>
+<figure><img alt="หน้าต่างสถานะ / Hologram ระหว่าง AUTO GEN" src="img/s_04_holo.jpg" /><figcaption>หน้าต่างสถานะ / Hologram ระหว่าง AUTO GEN</figcaption></figure>
+<h2 id="s4">4. แผงซ้าย: นำเข้าแบบและพารามิเตอร์</h2>
+<p><strong>01 นำเข้าแบบ</strong></p>
+<table>
+<thead>
+<tr>
+<th>คำสั่ง</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ช่องอัปโหลด / ข้อมูลเพิ่มเติมสำหรับ AI</td>
+<td>เหมือนหน้าต่างเริ่มต้น</td>
+</tr>
+<tr>
+<td>ประเภทโครงสร้าง · รอบตรวจสอบสูงสุด · ☑ ตรวจย้อนกลับ</td>
+<td>กำหนดจำนวนรอบที่ AI เทียบโมเดลกับแบบ (ค่าเริ่ม 4)</td>
+</tr>
+<tr>
+<td>ให้ AI วิเคราะห์แบบและสร้างโมเดล 3D</td>
+<td>อ่านแบบ + สร้างโมเดลเท่านั้น</td>
+</tr>
+<tr>
+<td>🧱 อ่านแบบอัตโนมัติ (ไม่ใช้ AI) → กริด + ผนัง</td>
+<td>Plan2BOQ ไม่ต้องใช้ AI · ใส่ "กว้างรวมแนวนอน (m)" เพื่อกำหนดมาตราส่วน</td>
+</tr>
+</tbody>
+</table>
+<p><strong>02 พารามิเตอร์ (แก้เองได้ทุกค่า แล้วกด "สร้างโมเดล + ออกแบบเบื้องต้น")</strong></p>
+<table>
+<thead>
+<tr>
+<th>กลุ่ม</th>
+<th>ค่าที่กรอก</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>กริด</td>
+<td>ระยะ Grid X / Y (m) · ชื่อ Grid X / Y · ตำแหน่งที่ไม่มีเสา (เช่น 2-B, 3-B)</td>
+</tr>
+<tr>
+<td>ชั้น</td>
+<td>ชื่อชั้น · ความสูงแต่ละชั้น (m)</td>
+</tr>
+<tr>
+<td>หลังคา</td>
+<td>ระบบหลังคา "🤖 AI อัตโนมัติ — อ่านจากแบบ" (ค่าเริ่ม) หรือ "✍ กำหนดเอง" · ความสูงชายคา · ความชัน (°) · ระยะแป · ระยะ Girt · ระยะจันทันเดี่ยว · ค้ำยัน X-Bracing · ฐานเสาเหล็ก ยึดหมุน/ยึดแน่น</td>
+</tr>
+<tr>
+<td>ฐานราก</td>
+<td>qa ดิน (t/m²) · Df (m) · ขนาด/ความยาวเข็ม · น้ำหนักปลอดภัยเข็ม (ตัน/ต้น)</td>
+</tr>
+<tr>
+<td>ชิ้นส่วนเพิ่ม</td>
+<td>JSON extras = คานซอย คานยื่น เสาเพิ่ม ค้ำยัน (พิกัด m)</td>
+</tr>
+<tr>
+<td>เลือกชนิดชิ้นส่วน</td>
+<td>พื้น · เสา · คาน · หลังคา · ฐานราก ฯลฯ ล็อกค่าได้</td>
+</tr>
+</tbody>
+</table>
+<p><strong>⚙ ตั้งค่า</strong> — คอนกรีต fc' (210 / 240 / 280 / 320 ksc) · เหล็กเสริมหลัก SD40 / SD50 · ปลอก SR24 · รูปพรรณ SS400 / SM490 / SM520 · LL ตามกฎกระทรวง ฉ.6 ข้อ 15 (150–500 kg/m²) · SDL · DL หลังคา · ผนังบนคาน · แรงลม · ตัวคูณ D / L · หน่วยแบบ (mm / m) · มาตราส่วน (1:50 / 1:100 / 1:200) · กระดาษ (A0–A3) · ข้อมูลโครงการ (ชื่อ เจ้าของ สถานที่ วิศวกร ใบอนุญาต กว.) · ระดับความละเอียด AI (เร็ว / มาตรฐาน / ละเอียดสูงสุด) · จำนวนหน้า PDF ที่อ่านสูงสุด → กด "บันทึกการตั้งค่า"</p>
+<figure><img alt="หน้าต่างตั้งค่า" src="img/s_05_settings.jpg" /><figcaption>หน้าต่างตั้งค่า</figcaption></figure>
+<h2 id="s5">5. มุมมอง 3D (Model)</h2>
+<table>
+<thead>
+<tr>
+<th>คำสั่ง</th>
+<th>ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISO / Plan / Front / Side</td>
+<td>เปลี่ยนมุมมองกล้อง</td>
+</tr>
+<tr>
+<td>ชั้นข้อมูล</td>
+<td>เปิด-ปิดแต่ละชนิด (เสา คาน แป Rafter ค้ำยัน ฐานราก …) พร้อมจำนวนชิ้น</td>
+</tr>
+<tr>
+<td>สี: ตามชนิดชิ้นส่วน / ตามวัสดุ / ตามอัตราส่วนการใช้งาน</td>
+<td>ระบายสีเพื่อดูชิ้นที่ Ratio สูงหรือ NG</td>
+</tr>
+<tr>
+<td>Wireframe · Grid</td>
+<td>แสดงเส้นโครง / กริดอ้างอิง</td>
+</tr>
+<tr>
+<td>◈ Hologram</td>
+<td>โหมดแสดงผลเรืองแสง</td>
+</tr>
+<tr>
+<td>▶ จำลองการก่อสร้าง + แถบเลื่อน</td>
+<td>เล่นทีละขั้น หรือเลื่อนดูถึงชั้นที่ต้องการ</td>
+</tr>
+<tr>
+<td>คลิกชิ้นส่วน</td>
+<td>ดูหน้าตัด ความยาว ผลออกแบบ (OK/NG)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s6">6. แท็บด้านขวา — แต่ละแท็บใช้ทำอะไร</h2>
+<table>
+<thead>
+<tr>
+<th>แท็บ</th>
+<th>ใช้ทำอะไร</th>
+<th>คำสั่งในแท็บ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>สรุป</td>
+<td>จำนวน Members / Nodes · น้ำหนักเหล็ก (ตัน) · คอนกรีต (m³) · ผลออกแบบทุกกลุ่ม (Ratio + OK/NG)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>✦ AI สั่งงาน</td>
+<td>สั่ง AI ปรับ/แก้/เพิ่มชิ้นส่วนด้วยภาษาไทย</td>
+<td>ปุ่มคำสั่งตัวอย่าง · 📎 แนบไฟล์ · ส่งคำสั่ง · ↶ ย้อนกลับ · ล้างบทสนทนา</td>
+</tr>
+<tr>
+<td>Calc Sheet</td>
+<td>รายการคำนวณทุกกลุ่ม แทนค่าตัวเลขเต็ม + OK/Ratio</td>
+<td>อ้างอิง ACI 318 / AISC ASD / AISI S100 · กฎกระทรวง ฉ.6</td>
+</tr>
+<tr>
+<td>วัสดุ &amp; หน้าตัด</td>
+<td>คุณสมบัติวัสดุ (Fy, Fu, E, ν, ρ) และหน้าตัดที่ใช้ (A, Ix, Iy, Sx)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BOQ</td>
+<td>ปริมาณเหล็กรูปพรรณ (kg) คอนกรีต (m³) แบบหล่อ (m²) ตามรายการ</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BOQ ละเอียด</td>
+<td>BOQ แบบ ปร.4 พร้อมราคา Factor F แยกงานโครงสร้าง/สถาปัตย์</td>
+<td>⚡ AI ถอดปริมาณละเอียด + ราคา · คำนวณงานโครงสร้างใหม่ · ส่งออก BOQ (.csv / Excel) · 🧱 ถอดงานสถาปัตย์ (ไม่ใช้ AI) · ↶ คืนผนังที่ลบ · จังหวัด (ฐานราคา) · Factor F</td>
+</tr>
+<tr>
+<td>แบบ 2D</td>
+<td>ชุดแบบ S-001 … S-205 (แปลน รูปด้าน รายละเอียด ตาราง)</td>
+<td>⚡ Auto สร้างแบบ 2D · เลือกรูปแบบ DXF 2018 / R12 / LISP · ส่งออก AutoCAD ทั้งชุด · แผ่นนี้ (.html) · ชุดแบบพิมพ์ / PDF · − + ซูม</td>
+</tr>
+<tr>
+<td>AutoCAD 2D</td>
+<td>เขียนแบบลง AutoCAD โดยตรง (หัวข้อ 8)</td>
+<td>✍ ส่งออกไป AutoCAD · 📋 คัดลอกโค้ด · ↻ ดูตัวอย่าง · ✦ AI เขียนแบบ → เปิด AutoCAD วาด · ⬇ ติดตั้ง AutoCAD Agent</td>
+</tr>
+<tr>
+<td>AI Teams</td>
+<td>AI 4 ชุด + Command Center (หัวข้อ 7)</td>
+<td>🚀 รัน AI ทุกชุด + รวมรายงาน · ▶ รันชุดนี้</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>ส่งออกไฟล์ทุกชนิด (หัวข้อ 10)</td>
+<td>คลิกแต่ละรายการเพื่อดาวน์โหลด</td>
+</tr>
+<tr>
+<td>Skill</td>
+<td>Skill การอ่านแบบ / ถอดแบบสถาปัตย์ ที่ฝังในโปรแกรม</td>
+<td>บันทึก Skill · คืนค่าเริ่มต้น · Export .md · Import .md</td>
+</tr>
+</tbody>
+</table>
+<div class="row"><img alt="แท็บสรุป" src="img/s_tab_sum.jpg" /> <img alt="แท็บ AI สั่งงาน" src="img/s_tab_chat.jpg" /> <img alt="แท็บ Calc Sheet" src="img/s_tab_calc.jpg" /></div>
+<div class="row"><img alt="แท็บ BOQ" src="img/s_tab_boq.jpg" /> <img alt="แท็บ BOQ ละเอียด" src="img/s_tab_qto.jpg" /> <img alt="แท็บแบบ 2D" src="img/s_tab_dwg.jpg" /></div>
+<div class="row"><img alt="แท็บ AutoCAD 2D" src="img/s_tab_acad.jpg" /> <img alt="แท็บ AI Teams" src="img/s_tab_agents.jpg" /> <img alt="แท็บ Export" src="img/s_tab_exp.jpg" /></div>
+<p><strong>BOQ ละเอียด ↔ Model</strong> — คลิกรายการใน BOQ ละเอียด โปรแกรมจะสลับไปหน้า Model และไฮไลต์ชิ้นส่วนนั้นแบบโปร่งใส พร้อมเส้นเหล็กเสริมและรายการวัสดุ</p>
+<h2 id="s7">7. AI แต่ละตัว — ทำอะไร ใช้อย่างไร</h2>
+<table>
+<thead>
+<tr>
+<th>AI</th>
+<th>เรียกจาก</th>
+<th>ทำอะไร</th>
+<th>ผลลัพธ์</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI อ่านเอกสาร</td>
+<td>📋 ตรวจสอบเอกสารแนบ → ✦ ให้ AI อ่านเอกสาร</td>
+<td>อ่านทุกหน้า สรุปชนิดแผ่น มาตราส่วน รหัสชิ้นส่วน ความพร้อม แผ่นที่ขาด</td>
+<td>รายงานสรุป/ละเอียด (.md)</td>
+</tr>
+<tr>
+<td>AI วิเคราะห์แบบ (Build)</td>
+<td>⚡ AUTO GEN หรือ "ให้ AI วิเคราะห์แบบ…"</td>
+<td>อ่านกริด ระดับ ขนาดชิ้นส่วน หลังคา ตาม Build Skill แล้วตรวจย้อนกลับหลายรอบ</td>
+<td>โมเดล 3D + สิ่งที่อ่านได้ + สมมติฐาน</td>
+</tr>
+<tr>
+<td>✦ AI สั่งงาน</td>
+<td>แท็บ AI สั่งงาน</td>
+<td>ทำตามคำสั่งภาษาไทย เช่น "เพิ่มคานซอยกลางช่อง B-C ชั้น 2"</td>
+<td>Popup ตัวอย่างการแก้ → ยืนยัน → หน้า Model + รายงาน</td>
+</tr>
+<tr>
+<td>🛠 AI ตรวจ / สั่งแก้</td>
+<td>ปุ่ม 🛠 ตรวจสอบ / สั่งแก้</td>
+<td>🔍 หาส่วนที่ขาดอีกครั้ง · 🛠 แก้รายการที่เลือก · พิมพ์คำสั่ง + 📎 แนบไฟล์</td>
+<td>โมเดลที่แก้แล้ว + ↶ ย้อนกลับ</td>
+</tr>
+<tr>
+<td>AI ถอด BOQ + ราคา</td>
+<td>BOQ ละเอียด → ⚡ AI ถอดปริมาณละเอียด + ราคา</td>
+<td>ถอดงานสถาปัตย์/โครงสร้างละเอียด ใส่ราคาตามจังหวัด + Factor F</td>
+<td>BOQ ปร.4</td>
+</tr>
+<tr>
+<td>✦ AI เขียนแบบ AutoCAD</td>
+<td>แท็บ AutoCAD 2D</td>
+<td>อ่าน Skill เขียนแบบ + ข้อมูลโมเดล วางแผนชุดแบบ แล้วส่งให้ Agent วาด</td>
+<td>ไฟล์ DWG</td>
+</tr>
+<tr>
+<td>🧮 AI ชุดคำนวณโครงสร้าง</td>
+<td>AI Teams</td>
+<td>ตรวจทุกกลุ่มออกแบบ (ACI/AISC/AISI) ตรวจรายการคำนวณตามมาตรฐาน</td>
+<td>รายงานคำนวณ + ปัญหาเข้า Skill</td>
+</tr>
+<tr>
+<td>📐 AI ชุดเขียนแบบโครงสร้าง</td>
+<td>AI Teams</td>
+<td>วางแผนชุดแบบ มาตราส่วน หมายเหตุ → entities → QA → ส่ง Agent</td>
+<td>ชุดแบบโครงสร้าง DWG</td>
+</tr>
+<tr>
+<td>🏛 AI ชุดวาดแบบสถาปัตยกรรม</td>
+<td>AI Teams</td>
+<td>อ่านแบบ → ผนัง ประตู หน้าต่าง ห้อง → แปลนสถาปัตย์</td>
+<td>แปลนสถาปัตย์ DWG</td>
+</tr>
+<tr>
+<td>💰 AI ชุดทำ BOQ</td>
+<td>AI Teams</td>
+<td>ถอดโครงสร้าง + สถาปัตย์ + ราคา ตรวจรายการขาด/ราคาผิดปกติ</td>
+<td>BOQ ปร.4</td>
+</tr>
+<tr>
+<td>🚀 AI Command Center</td>
+<td>AI Teams</td>
+<td>สั่ง 4 ชุดทำงานเป็นลำดับขั้น แล้วรวมรายงานระบบ</td>
+<td>รายงานรวม (สถานะ · ปัญหา · %)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>✦ AI สั่งงาน / สั่งแก้ — ดูผลก่อนยืนยันเสมอ</strong></p>
+<figure><img alt="ลำดับการสั่งแก้ด้วย AI" src="img/flow_edit.svg" /><figcaption>ลำดับการสั่งแก้ด้วย AI</figcaption></figure>
+<ol>
+<li>พิมพ์คำสั่งในช่อง "คำสั่ง" (หรือกดปุ่มคำสั่งตัวอย่าง) · แนบรูปตัด/แบบขยาย/ภาพหน้างานได้ด้วย 📎, Ctrl+V หรือลากไฟล์มาวาง</li>
+<li>กด "ส่งคำสั่ง" — AI อ่านไฟล์และโมเดล</li>
+<li>Popup เด้งขึ้นแสดง "สิ่งที่แก้ไข" "พารามิเตอร์ที่ปรับ" "หน้าตัดที่เปลี่ยน" และ "ผลต่อโมเดล"</li>
+<li>กด ✔ ยืนยันแก้ไข → โปรแกรมสลับไปหน้า Model ทันทีพร้อมรายงานจาก AI · หรือ ✖ ยกเลิก ไม่แก้</li>
+<li>ไม่พอใจผล กด ↶ ย้อนกลับ ได้ทุกครั้ง</li>
+</ol>
+<p><strong>AI Teams — 4 ชุดทำงานเป็นลำดับขั้น</strong></p>
+<figure><img alt="ลำดับการทำงาน AI Teams" src="img/flow_teams.svg" /><figcaption>ลำดับการทำงาน AI Teams</figcaption></figure>
+<ol>
+<li>แท็บ AI Teams → ติ๊กเลือกชุดที่ต้องการใน Command Center</li>
+<li>กด 🚀 รัน AI ทุกชุด + รวมรายงานระบบ (หรือ ▶ รันชุดนี้ ทีละชุด)</li>
+<li>Stage 1: ชุดคำนวณ + ชุดสถาปัตย์ ทำพร้อมกัน → Stage 2: ชุดเขียนแบบโครงสร้าง + ชุด BOQ</li>
+<li>ดูรายงานแต่ละชุด (สถานะ · ปัญหา · %) และรายงานรวมระบบด้านบน</li>
+<li>แต่ละชุดมีช่อง "สั่งเพิ่มเติม" และ Skill ของตัวเอง (ดูหัวข้อ 9)</li>
+</ol>
+<h2 id="s8">8. AI เขียนแบบใน AutoCAD โดยตรง (AutoCAD Agent)</h2>
+<figure><img alt="ลำดับการทำงาน AutoCAD Agent" src="img/flow_acad.svg" /><figcaption>ลำดับการทำงาน AutoCAD Agent</figcaption></figure>
+<p><strong>ติดตั้งครั้งแรก (Windows + AutoCAD เต็มรุ่น)</strong></p>
+<ol>
+<li>แท็บ AutoCAD 2D → กด ⬇ ติดตั้ง AutoCAD Agent → ได้ไฟล์ AI3D_AutoCAD_Agent.ps1 และ .bat</li>
+<li>วางทั้ง 2 ไฟล์ไว้ในโฟลเดอร์เดียวกัน แล้วดับเบิลคลิก .bat — หน้าต่างสถานะ Agent จะเปิดค้างไว้</li>
+<li>Agent เฝ้าโฟลเดอร์ Downloads หาไฟล์ *AI3D2D*.lsp ที่สร้างจากโปรแกรมนี้</li>
+</ol>
+<p><strong>ใช้งาน</strong></p>
+<ol>
+<li>เลือกหน่วยแบบ มาตราส่วน รูปแบบ (AutoLISP .lsp / Script .scr) และแผ่นที่ต้องการวาด</li>
+<li>กด ✦ AI เขียนแบบ → เปิด AutoCAD วาด (ใช้ AI) หรือ "ส่งงานให้ Agent (ไม่ใช้ AI)"</li>
+<li>Agent เปิด AutoCAD ผ่าน COM → ตั้ง TRUSTEDPATHS → load → รันคำสั่ง AI3D2D → บันทึก DWG ที่ D:\Claude_Project\AI3D_DWG</li>
+<li>ไม่มี Agent: ใน AutoCAD พิมพ์ APPLOAD เลือกไฟล์ .lsp แล้วพิมพ์ AI3D2D (AutoCAD LT รุ่นเก่าใช้ SCRIPT กับไฟล์ .scr)</li>
+</ol>
+<p><strong>แก้ปัญหา</strong></p>
+<table>
+<thead>
+<tr>
+<th>อาการ</th>
+<th>วิธีแก้</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ดับเบิลคลิก .bat แล้วปิดทันที</td>
+<td>คลิกขวา .ps1 → Properties → Unblock แล้วรันใหม่</td>
+</tr>
+<tr>
+<td>Agent ไม่เห็นไฟล์</td>
+<td>ตรวจว่าเบราว์เซอร์บันทึกลง Downloads และชื่อไฟล์มี AI3D2D</td>
+</tr>
+<tr>
+<td>AutoCAD ถามความปลอดภัยไฟล์ LISP</td>
+<td>Agent ตั้ง TRUSTEDPATHS ให้แล้ว หากยังถาม เลือก "Load Once"</td>
+</tr>
+<tr>
+<td>AutoCAD LT</td>
+<td>LT 2024 ขึ้นไปรัน LISP ได้ รุ่นเก่าใช้ไฟล์ .scr</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s9">9. Skill ที่ฝังในโปรแกรม — เรียนรู้และพัฒนา</h2>
+<figure><img alt="วงจรการพัฒนา Skill" src="img/flow_skill.svg" /><figcaption>วงจรการพัฒนา Skill</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>อยู่ที่</th>
+<th>ใช้กับ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build Skill (การสร้างโมเดล)</td>
+<td>แท็บ Skill</td>
+<td>AI อ่านแบบ + ตรวจย้อนกลับ</td>
+</tr>
+<tr>
+<td>Skill ถอดแบบสถาปัตยกรรม</td>
+<td>แท็บ Skill</td>
+<td>AI ถอด BOQ งานสถาปัตย์</td>
+</tr>
+<tr>
+<td>Skill การเขียนแบบ AutoCAD</td>
+<td>แท็บ AutoCAD 2D</td>
+<td>AI เขียนแบบ + Agent</td>
+</tr>
+<tr>
+<td>Skill คำนวณ / สถาปัตย์ / BOQ</td>
+<td>แท็บ AI Teams (ใต้แต่ละชุด)</td>
+<td>AI Teams แต่ละชุด</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>ทุกรอบที่ทำงาน AI บันทึก "บทเรียน" และ "ปัญหา" เข้า Skill ของชุดนั้นอัตโนมัติ</li>
+<li>กด ✦ AI ปรับปรุง Skill — AI รวมบทเรียนเป็น Skill เวอร์ชันใหม่ (v1 → v2 …)</li>
+<li>ผลไม่ดี กด ↺ Rollback กลับเวอร์ชันก่อน</li>
+<li>แก้ข้อความ Skill เองได้ แล้วกด บันทึก Skill · Export .md / Import .md เพื่อสำรองหรือใช้ข้ามเครื่อง · คืนค่าเริ่มต้นได้</li>
+</ol>
+<figure><img alt="แท็บ Skill" src="img/s_tab_skill.jpg" /><figcaption>แท็บ Skill</figcaption></figure>
+<h2 id="s10">10. การแสดงการทำงานของ AI</h2>
+<table>
+<thead>
+<tr>
+<th>การแสดงผล</th>
+<th>เกิดขึ้นเมื่อ</th>
+<th>ดูอะไรได้</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI CORE (ตัวอักษร Matrix) กลางจอ</td>
+<td>ทุกครั้งที่มีคำสั่งใช้ AI</td>
+<td>ชื่องาน · เวลา · สถานะ → COMPLETE / ERROR แล้วหายเอง</td>
+</tr>
+<tr>
+<td>AI CORE แบบโปร่งใสในภาพ Hologram</td>
+<td>เปิดหน้าต่างสถานะ / Hologram อยู่</td>
+<td>ซ้อนจาง ๆ ใต้ภาพการสร้าง ไม่บังรูป</td>
+</tr>
+<tr>
+<td>AI CORE ขนาดเล็กมุมขวาล่าง</td>
+<td>มีหน้าต่างอื่นเปิดอยู่</td>
+<td>ไม่บังหน้าต่างที่ทำงาน</td>
+</tr>
+<tr>
+<td>Agent Mode HUD</td>
+<td>AI Teams / AI เขียนแบบ</td>
+<td>ขั้นตอน % สถานะ ปัญหา แบบ real-time</td>
+</tr>
+<tr>
+<td>รายงานสรุป</td>
+<td>จบ AUTO GEN</td>
+<td>OK/NG · ปริมาณ · ราคา · ประเด็นที่ต้องตรวจ</td>
+</tr>
+</tbody>
+</table>
+<figure><img alt="AI CORE กำลังทำงาน" src="img/s_06_aicore.jpg" /><figcaption>AI CORE กำลังทำงาน</figcaption></figure>
+<h2 id="s11">11. ส่งออกไฟล์ (Export)</h2>
+<table>
+<thead>
+<tr>
+<th>ไฟล์</th>
+<th>อยู่ที่</th>
+<th>เปิดด้วย / ใช้ทำอะไร</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STAAD.Pro (.std)</td>
+<td>แท็บ Export</td>
+<td>Joint / Member / Property / Support / DL LL WL + Load Comb.</td>
+</tr>
+<tr>
+<td>ETABS (.e2k)</td>
+<td>แท็บ Export</td>
+<td>Stories / Grids / Materials / Sections / Area loads / Combos</td>
+</tr>
+<tr>
+<td>AutoCAD (.dxf)</td>
+<td>แท็บ Export / แบบ 2D</td>
+<td>DXF 2018–2025 (UTF-8, แนะนำ) · DXF R12 (CAD รุ่นเก่า) · แยก Layer หน่วย mm</td>
+</tr>
+<tr>
+<td>AutoLISP (.lsp) / Script (.scr)</td>
+<td>แท็บ AutoCAD 2D</td>
+<td>วาดลง AutoCAD โดยตรง</td>
+</tr>
+<tr>
+<td>SketchUp (.dae)</td>
+<td>แท็บ Export</td>
+<td>SketchUp: File › Import › COLLADA (.dae) แยกกลุ่มตามชนิด พร้อมสี</td>
+</tr>
+<tr>
+<td>BOQ (.csv)</td>
+<td>แท็บ Export / BOQ ละเอียด</td>
+<td>เปิดใน Excel</td>
+</tr>
+<tr>
+<td>ชุดแบบพิมพ์ (.html → PDF)</td>
+<td>แท็บแบบ 2D</td>
+<td>เปิดแล้วสั่งพิมพ์เป็น PDF</td>
+</tr>
+<tr>
+<td>Model (.json)</td>
+<td>แท็บ Export</td>
+<td>พารามิเตอร์ + Node + Member + หน้าตัด</td>
+</tr>
+<tr>
+<td>บันทึกโครงการ (.json)</td>
+<td>รายงานสรุป → 💾</td>
+<td>เปิดงานต่อภายหลัง</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s12">12. ข้อควรระวังและแก้ปัญหา</h2>
+<ul>
+<li>ผลเป็นการออกแบบเบื้องต้น (Preliminary) ต้องวิเคราะห์โครงสร้างจริงและวิศวกรผู้รับผิดชอบตรวจลงนามก่อนก่อสร้าง</li>
+<li>ราคาต่อหน่วยเป็นค่าประมาณ ตรวจกับ สนค. (index.tpso.go.th) และหลักเกณฑ์กรมบัญชีกลางก่อนใช้</li>
+<li>สิ่งที่โปรแกรม "สมมติ" ดูได้ในรายงาน (assumptions) ตรวจกับแบบทุกครั้ง</li>
+<li>ก่อนส่งเข้า STAAD / ETABS ตรวจหน้าตัด Beta angle จุดต่อ และ Load Case อีกครั้ง</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>อาการ</th>
+<th>วิธีแก้</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>เปิดนอก Claude แล้ว AI ไม่ทำงาน</td>
+<td>กด 🚀 เข้า Claude ทันที หรือใช้โหมด "ไม่ใช้ AI" (Plan2BOQ)</td>
+</tr>
+<tr>
+<td>AI อ่านแบบไม่ครบ</td>
+<td>ตรวจเอกสารแนบก่อน · พิมพ์ข้อมูลเพิ่มเติม · เพิ่มรอบตรวจสอบ · ใช้ 🛠 ตรวจสอบ / สั่งแก้</td>
+</tr>
+<tr>
+<td>ชิ้นส่วนเกิน / ผิดชนิด</td>
+<td>เลือก / ล็อกชนิดชิ้นส่วน · ตั้งเป็น "✍ กำหนดเอง"</td>
+</tr>
+<tr>
+<td>ผนังผิดใน Plan2BOQ (เฟอร์นิเจอร์ ต้นไม้)</td>
+<td>แตะเส้นผนังบนภาพเพื่อลบ · ↶ คืนผนังที่ลบ</td>
+</tr>
+<tr>
+<td>PDF หลายหน้าอ่านไม่หมด</td>
+<td>⚙ ตั้งค่า → จำนวนหน้า PDF ที่อ่านสูงสุด</td>
+</tr>
+<tr>
+<td>เปิดไฟล์ในเครื่องแล้วไม่มีแท็บ AutoCAD / คู่มือ</td>
+<td>วาง acad.js และโฟลเดอร์ manual ไว้โฟลเดอร์เดียวกับไฟล์ .html</td>
+</tr>
+</tbody>
+</table></body></html>

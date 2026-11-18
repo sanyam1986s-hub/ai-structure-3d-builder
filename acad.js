@@ -693,4 +693,24 @@ ${B}:active{translate:0 -1px;scale:.98}
 @media (prefers-reduced-motion:reduce){${B}:hover,${B}:focus-visible{animation:none;translate:none;scale:none}}`;
   document.head.appendChild(st); })();
 
+// ---------- v5.7 full user manual embedded in Help (manual/manual.html + PDF) ----------
+(function manualHelp(){ const VER='5.7', URL='manual/manual.html', PDF=`manual/AI3D_Manual_v${VER}.pdf`;
+  const st=document.createElement('style'); st.textContent=`#manModal{position:fixed;inset:0;z-index:98;display:none;place-items:center;padding:14px;background:#02050cd9;backdrop-filter:blur(3px)}
+#manModal.on{display:grid}#manModal .mp{width:min(1100px,100%);height:min(92vh,1000px);display:flex;flex-direction:column;background:#0b1220;border:1px solid #38bdf8aa;border-radius:14px;overflow:hidden;box-shadow:0 0 40px #22d3ee44}
+#manModal .mh{display:flex;gap:8px;align-items:center;padding:8px 12px;color:#e0f2fe;border-bottom:1px solid #1e3a8a}#manModal .mh b{flex:1;font-size:14px}
+#manModal .mh a,#manModal .mh button{font:inherit;font-size:12.5px;padding:6px 12px;border-radius:8px;border:1px solid #38bdf8;background:#0e7490;color:#fff;text-decoration:none;cursor:pointer}
+#manModal iframe{flex:1;border:0;background:#fff;width:100%}`; document.head.appendChild(st);
+  const m=document.createElement('div'); m.id='manModal'; m.setAttribute('role','dialog'); m.setAttribute('aria-label','คู่มือการใช้งาน');
+  m.innerHTML=`<div class="mp"><div class="mh"><b>📘 คู่มือการใช้งาน AI Structure 3D Builder v${VER}</b><a href="${PDF}" download="AI3D_Manual_v${VER}.pdf" target="_blank" rel="noopener">⬇ ดาวน์โหลด PDF</a><a href="${URL}" target="_blank" rel="noopener">↗ เปิดแท็บใหม่</a><button type="button" id="manClose">ปิด</button></div><iframe title="คู่มือการใช้งาน" loading="lazy"></iframe></div>`;
+  document.body.appendChild(m); const fr=m.querySelector('iframe');
+  const open=()=>{ if(!fr.src) fr.src=URL; m.classList.add('on'); }, close=()=>m.classList.remove('on');
+  m.querySelector('#manClose').onclick=close; m.addEventListener('click',e=>{ if(e.target===m) close(); }); document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&m.classList.contains('on')) close(); });
+  const hd=document.querySelector('#helpModal .hud-hd'), hc=document.getElementById('helpClose');
+  if(hd&&hc){ const b=document.createElement('button'); b.type='button'; b.className='hbtn'; b.id='helpManual'; b.textContent='📘 คู่มือฉบับเต็ม (รูป + ลำดับงาน + PDF)'; b.onclick=open; hd.insertBefore(b,hc); }
+  const body=document.querySelector('#helpModal .help-body');
+  if(body){ const d=document.createElement('div'); d.style.cssText='margin:0 0 10px;padding:10px 12px;border:1px solid #38bdf8;border-radius:10px;background:#0e749022';
+    d.innerHTML=`<b>📘 คู่มือฉบับเต็ม v${VER}</b> — ลำดับการใช้งานแบบลูกศร รูปหน้าจอพร้อมหมายเลขปุ่ม ทุกคำสั่งใช้ทำอะไร และ AI แต่ละชุด · <a href="#" id="helpManual2">เปิดคู่มือ</a> · <a href="${PDF}" download="AI3D_Manual_v${VER}.pdf" target="_blank" rel="noopener">ดาวน์โหลด PDF</a>`;
+    body.insertBefore(d,body.firstChild); d.querySelector('#helpManual2').onclick=e=>{ e.preventDefault(); open(); }; }
+  window.__ai3dManual=open; })();
+
 })();

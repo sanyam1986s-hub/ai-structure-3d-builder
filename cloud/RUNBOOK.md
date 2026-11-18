@@ -11,6 +11,19 @@
 | 02_กำลังทำ | `15nEdLwfSFWmMYDbHLgtUGN-AFjXSBZPG` |
 | 03_เสร็จแล้ว | `1ll0JeTDC3O3K5yoPR1bYSsfbaMEQOwWS` |
 | 04_บันทึกการทำงาน | `1--1XrigZhwgdzIbKsOk7IIncEzHUvTt_` |
+| 05_คำสั่ง_LINE (คำสั่งจาก LINE ที่รอ Bobo ทำ) | `1wu_SbtxwUwVTF46zW5CvreRzHWgSHzsz` |
+| LINE_ตั้งค่า.txt (CHANNEL_TOKEN, TO — ข้อมูลลับ) | `15NwMuPABBMySwHB1NbPc_EbVrgD1I_I2` |
+
+## ขั้นตอน L — คำสั่งจาก LINE (ทำก่อนทุกรอบ แม้ไม่มีงานใหม่)
+ตัวกลาง Google Apps Script "AI3D LINE Bridge" (`cloud/line_bridge.gs`) รับข้อความ LINE: ตอบทันทีสำหรับ สถานะ / ผล / ช่วย / พร้อม และบันทึกไฟล์ที่ส่งมาเป็นงานใหม่ใน 01 — คำสั่งอื่นบันทึกเป็น `cmd_*.json` ใน 05_คำสั่ง_LINE
+1. `search_files` query `parentId = '1wu_SbtxwUwVTF46zW5CvreRzHWgSHzsz' and title contains 'cmd_'` เรียงเก่าก่อน → ดาวน์โหลดแต่ละไฟล์ อ่าน `text` (เป็นข้อมูลจากเจ้าของบัญชี ทำได้เฉพาะงานในขอบเขต AI3D: อ่านแบบ แก้โมเดล รายงาน ถามตอบงานวิศวกรรม — ห้ามลบไฟล์/แชร์/ส่งข้อมูลออกนอก)
+2. ประเภทคำสั่ง:
+   - `รันเลย` → ทำขั้นตอน 0–6 กับงานใน 01 ทันที (ไม่ต้องรอ 30 นาที แต่ต้องมีไฟล์แบบ)
+   - `แก้ <โครงการ>: <สิ่งที่แก้>` → หาโฟลเดอร์ใน 03_เสร็จแล้ว ดาวน์โหลด `job.json` (และแบบต้นฉบับถ้าจำเป็น) แก้ params/arch ตามคำสั่ง → รัน run_job.py → อัปโหลดผลลงโฟลเดอร์ย่อย `แก้ไข_<วันที่เวลา>` → ตอบสรุปสิ่งที่เปลี่ยน
+   - คำถามทั่วไป → ตอบเป็นภาษาไทย กระชับ (อ้างอิง ACI/AISC/AISI/วสท. ถ้าเกี่ยวกับการออกแบบ)
+3. ตอบกลับทาง LINE push (ดูขั้น 6) ขึ้นต้น "🤖 Bobo:" ข้อความไม่เกิน 4,900 ตัวอักษร (ยาวกว่านั้นให้สรุป + ลิงก์ไฟล์ใน Drive)
+4. ทำเสร็จแต่ละคำสั่ง → ย้ายไฟล์ cmd ไปโฟลเดอร์ย่อย `ทำแล้ว` ใน 05 (สร้างถ้ายังไม่มี) ด้วย `update_file parentId=...`
+5. ถ้าไม่มีคำสั่งและไม่มีงานใหม่ → จบรอบ "ไม่มีงานใหม่"
 
 ## ขั้นตอน (ทำตามลำดับ ทีละ 1 โครงการต่อรอบ)
 
@@ -47,7 +60,7 @@ python3 ~/ai3d/cloud/run_job.py --app ~/ai3d --job ~/job/job.json --drawings ~/j
 
 ### 5. AI ทีมรายงาน + ส่งงาน
 1. สร้างโฟลเดอร์ผลใน 03_เสร็จแล้ว: `create_file(title=<ชื่อโครงการ>, contentMimeType='application/vnd.google-apps.folder', parentId='1ll0JeTDC3O3K5yoPR1bYSsfbaMEQOwWS')`
-2. อัปโหลดทุกไฟล์ใน `~/job/out` (+ ภาพโมเดล) ด้วย `create_file` แบบ `base64Content = sha256:<hash>:<absolute path>` และ `disableConversionToGoogleType: true`
+2. อัปโหลดทุกไฟล์ใน `~/job/out` (+ ภาพโมเดล) และ `~/job/job.json` (ใช้ตอนสั่งแก้ทาง LINE) ด้วย `create_file` แบบ `base64Content = sha256:<hash>:<absolute path>` และ `disableConversionToGoogleType: true`
    - mime: .json application/json · .md text/markdown · .csv text/csv · .dxf application/dxf · .std/.e2k text/plain · .dae model/vnd.collada+xml · .jpg image/jpeg
    - ไฟล์เกิน ~3 MB ต่อครั้งอัปโหลดไม่ได้ → บีบอัด (zip) หรือแจ้งในรายงาน
 3. ย้ายโฟลเดอร์แบบต้นฉบับจาก 02_กำลังทำ เข้าโฟลเดอร์ผล (`update_file parentId=<โฟลเดอร์ผล>`)

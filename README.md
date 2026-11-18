@@ -94,3 +94,7 @@
 - `window.__ai3dCloud.run(job)` ในโปรแกรม · ไฟล์โครงการ .json เก็บโมเดลสถาปัตย์ (AI) ด้วย
 - `skills/AI_Build_Skill_v2_full.md` Build Skill เต็ม · `cloud/params_schema_example.json`
 - Google Drive: AI3D_Cloud/01_งานใหม่ → 02_กำลังทำ → 03_เสร็จแล้ว · 04_บันทึกการทำงาน · งานตั้งเวลาเช็กทุก 1 ชั่วโมง
+
+## v5.9.1 (2026-11-19) — คุยสั่งงาน Bobo ผ่าน LINE
+- `cloud/line_bridge.gs` ตัวกลาง Google Apps Script (Webhook LINE): ตอบทันที สถานะ / ผล / ช่วย / พร้อม · รับรูป/PDF/ไฟล์ในแชตเป็นงานใหม่ · คำสั่งอื่นส่งให้ Bobo รอบถัดไป · รับคำสั่งเฉพาะเจ้าของ (User ID)
+- RUNBOOK ขั้นตอน L: Bobo อ่านคำสั่งจาก 05_คำสั่ง_LINE ทุกรอบ (รันเลย · แก้ <โครงการ>: … · ถามตอบ) แล้วตอบกลับทาง LINE · ผลงานเก็บ job.json เพื่อสั่งแก้ภายหลัง

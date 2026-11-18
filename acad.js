@@ -693,8 +693,8 @@ ${B}:active{translate:0 -1px;scale:.98}
 @media (prefers-reduced-motion:reduce){${B}:hover,${B}:focus-visible{animation:none;translate:none;scale:none}}`;
   document.head.appendChild(st); })();
 
-// ---------- v5.7 full user manual embedded in Help (manual/manual.html + PDF) ----------
-(function manualHelp(){ const VER='5.7', URL='manual/manual.html', PDF=`manual/AI3D_Manual_v${VER}.pdf`;
+// ---------- v5.7+ full user manual embedded in Help (manual/manual.html + PDF) ----------
+(function manualHelp(){ const VER='5.8', URL='manual/manual.html', PDF=`manual/AI3D_Manual_v${VER}.pdf`;
   const st=document.createElement('style'); st.textContent=`#manModal{position:fixed;inset:0;z-index:98;display:none;place-items:center;padding:14px;background:#02050cd9;backdrop-filter:blur(3px)}
 #manModal.on{display:grid}#manModal .mp{width:min(1100px,100%);height:min(92vh,1000px);display:flex;flex-direction:column;background:#0b1220;border:1px solid #38bdf8aa;border-radius:14px;overflow:hidden;box-shadow:0 0 40px #22d3ee44}
 #manModal .mh{display:flex;gap:8px;align-items:center;padding:8px 12px;color:#e0f2fe;border-bottom:1px solid #1e3a8a}#manModal .mh b{flex:1;font-size:14px}

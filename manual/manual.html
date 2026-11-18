@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>คู่มือ AI Structure 3D Builder v5.7</title><style>
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>คู่มือ AI Structure 3D Builder v5.8</title><style>
 @page{size:A4;margin:14mm 12mm 16mm}
 body{font-family:Loma,Tahoma,'Noto Sans Thai',sans-serif;color:#0f172a;font-size:13.5px;line-height:1.6;max-width:980px;margin:0 auto;padding:18px}
 h1{font-size:26px;border-bottom:3px solid #2563eb;padding-bottom:8px;margin:0 0 6px}
@@ -20,7 +20,7 @@ figcaption{font-size:12px;color:#475569;margin-top:4px}
 ol li,ul li{margin:3px 0}
 .dl{float:right;background:#2563eb;color:#fff;padding:6px 12px;border-radius:8px;text-decoration:none;font-size:13px}
 @media print{.dl{display:none}body{max-width:none;padding:0}}
-</style></head><body><a class="dl" href="AI3D_Manual_v5.7.pdf" download>⬇ ดาวน์โหลด PDF</a><h1>คู่มือการใช้งาน AI Structure 3D Builder v5.7</h1><div class="meta">เวอร์ชัน 5.7 · 2026-11-19 · มาตรฐานอ้างอิง ACI 318 · AISC · AISI S100 · วสท. / มยผ.</div>
+</style></head><body><a class="dl" href="AI3D_Manual_v5.8.pdf" download>⬇ ดาวน์โหลด PDF</a><h1>คู่มือการใช้งาน AI Structure 3D Builder v5.8</h1><div class="meta">เวอร์ชัน 5.8 · 2026-11-19 · มาตรฐานอ้างอิง ACI 318 · AISC · AISI S100 · วสท. / มยผ.</div>
 <p>AI Structure 3D Builder อ่านแบบ (รูป / PDF / DXF) ด้วย AI แล้วสร้างโมเดลโครงสร้าง 3D (เหล็ก + คสล.) ออกแบบเบื้องต้นตาม ACI / AISC / AISI / วสท. ถอด BOQ แบบ ปร.4 เขียนแบบ 2D และส่งออกไป STAAD, ETABS, AutoCAD, SketchUp ได้ในที่เดียว คู่มือนี้อธิบายลำดับการใช้งาน ทุกปุ่มคำสั่ง และ AI แต่ละชุด พร้อมรูปประกอบ</p>
 <nav class="toc"><b>สารบัญ</b><ol><li><a href="#s1">ภาพรวมและลำดับการใช้งาน</a></li><li><a href="#s2">ส่วนประกอบหน้าจอ (ดูหมายเลขในรูป)</a></li><li><a href="#s3">เริ่มงาน: หน้าต่างเริ่มต้นและ ⚡ AUTO GEN</a></li><li><a href="#s4">แผงซ้าย: นำเข้าแบบและพารามิเตอร์</a></li><li><a href="#s5">มุมมอง 3D (Model)</a></li><li><a href="#s6">แท็บด้านขวา — แต่ละแท็บใช้ทำอะไร</a></li><li><a href="#s7">AI แต่ละตัว — ทำอะไร ใช้อย่างไร</a></li><li><a href="#s8">AI เขียนแบบใน AutoCAD โดยตรง (AutoCAD Agent)</a></li><li><a href="#s9">Skill ที่ฝังในโปรแกรม — เรียนรู้และพัฒนา</a></li><li><a href="#s10">การแสดงการทำงานของ AI</a></li><li><a href="#s11">ส่งออกไฟล์ (Export)</a></li><li><a href="#s12">ข้อควรระวังและแก้ปัญหา</a></li></ol></nav>
 <h2 id="s1">1. ภาพรวมและลำดับการใช้งาน</h2>
@@ -109,6 +109,11 @@ ol li,ul li{margin:3px 0}
 <td>9</td>
 <td>ให้ AI วิเคราะห์แบบและสร้างโมเดล 3D</td>
 <td>ทำเฉพาะขั้นอ่านแบบ + สร้างโมเดล (ไม่ทำแบบ 2D/BOQ)</td>
+</tr>
+<tr>
+<td>9a</td>
+<td>🏛 AI สร้างโมเดลสถาปัตยกรรม (ใต้ปุ่ม 9)</td>
+<td>AI อ่านแบบสถาปัตย์ → ผนัง ประตู หน้าต่าง ห้อง วางบนกริดเดียวกับโครงสร้าง</td>
 </tr>
 <tr>
 <td>13</td>
@@ -226,6 +231,10 @@ ol li,ul li{margin:3px 0}
 <td>อ่านแบบ + สร้างโมเดลเท่านั้น</td>
 </tr>
 <tr>
+<td>🏛 AI สร้างโมเดลสถาปัตยกรรม (คู่กับโครงสร้าง)</td>
+<td>สร้าง/อัปเดตโมเดลสถาปัตย์จากแบบ (นอก Claude ใช้แบบอัตโนมัติจากกริด)</td>
+</tr>
+<tr>
 <td>🧱 อ่านแบบอัตโนมัติ (ไม่ใช้ AI) → กริด + ผนัง</td>
 <td>Plan2BOQ ไม่ต้องใช้ AI · ใส่ "กว้างรวมแนวนอน (m)" เพื่อกำหนดมาตราส่วน</td>
 </tr>
@@ -266,7 +275,8 @@ ol li,ul li{margin:3px 0}
 </tr>
 </tbody>
 </table>
-<p><strong>⚙ ตั้งค่า</strong> — คอนกรีต fc' (210 / 240 / 280 / 320 ksc) · เหล็กเสริมหลัก SD40 / SD50 · ปลอก SR24 · รูปพรรณ SS400 / SM490 / SM520 · LL ตามกฎกระทรวง ฉ.6 ข้อ 15 (150–500 kg/m²) · SDL · DL หลังคา · ผนังบนคาน · แรงลม · ตัวคูณ D / L · หน่วยแบบ (mm / m) · มาตราส่วน (1:50 / 1:100 / 1:200) · กระดาษ (A0–A3) · ข้อมูลโครงการ (ชื่อ เจ้าของ สถานที่ วิศวกร ใบอนุญาต กว.) · ระดับความละเอียด AI (เร็ว / มาตรฐาน / ละเอียดสูงสุด) · จำนวนหน้า PDF ที่อ่านสูงสุด → กด "บันทึกการตั้งค่า"</p>
+<p><strong>⚙ ตั้งค่า</strong> — คอนกรีต fc' (210 / 240 / 280 / 320 ksc) · เหล็กเสริมหลัก SD40 / SD50 · ปลอก SR24 · รูปพรรณ SS400 / SM490 / SM520 · LL ตามกฎกระทรวง ฉ.6 ข้อ 15 (150–500 kg/m²) · SDL · DL หลังคา · ผนังบนคาน · แรงลม · ตัวคูณ D / L · หน่วยแบบ (mm / m) · มาตราส่วน (1:50 / 1:100 / 1:200) · กระดาษ (A0–A3) · ข้อมูลโครงการ (ชื่อ เจ้าของ สถานที่ วิศวกร ใบอนุญาต กว.) · ระดับความละเอียด AI (เร็ว / มาตรฐาน / ละเอียดสูงสุด) · <strong>จำนวนหน้า PDF / รูปภาพ / ไฟล์ DXF ที่อ่านสูงสุด (ค่าเริ่ม 100 / 100 / 100)</strong> · ☑ 🏛 สร้างโมเดลสถาปัตยกรรมคู่กับโครงสร้างอัตโนมัติ → กด "บันทึกการตั้งค่า"</p>
+<p><strong>อ่านแบบได้ 100 แผ่น</strong> — AI รับภาพได้จำกัดต่อครั้ง โปรแกรมจึงแบ่งแผ่นที่เกินเป็นชุด ๆ ให้ AI อ่านทีละชุด แล้วสรุปเป็น "SHEET DIGEST" ส่งให้ทุกขั้นต่อไป (อ่านแบบ · ตรวจย้อนกลับ · BOQ · สั่งแก้) ส่วน 📋 ตรวจสอบเอกสารแนบ ก็อ่านทุกหน้าเป็นชุดเช่นกัน</p>
 <figure><img alt="หน้าต่างตั้งค่า" src="img/s_05_settings.jpg" /><figcaption>หน้าต่างตั้งค่า</figcaption></figure>
 <h2 id="s5">5. มุมมอง 3D (Model)</h2>
 <table>
@@ -303,7 +313,11 @@ ol li,ul li{margin:3px 0}
 </tr>
 <tr>
 <td>คลิกชิ้นส่วน</td>
-<td>ดูหน้าตัด ความยาว ผลออกแบบ (OK/NG)</td>
+<td>ดูหน้าตัด ความยาว ผลออกแบบ (OK/NG) · คลิกผนัง/ประตู/หน้าต่าง/ห้อง ดูขนาด รหัส ชั้น</td>
+</tr>
+<tr>
+<td>ชั้นข้อมูลสถาปัตย์</td>
+<td>ผนัง (สถาปัตย์) · หน้าต่าง · ประตู · พื้นผิวห้อง — เปิด-ปิดแยกจากโครงสร้างได้</td>
 </tr>
 </tbody>
 </table>
@@ -398,8 +412,14 @@ ol li,ul li{margin:3px 0}
 <tr>
 <td>AI วิเคราะห์แบบ (Build)</td>
 <td>⚡ AUTO GEN หรือ "ให้ AI วิเคราะห์แบบ…"</td>
-<td>อ่านกริด ระดับ ขนาดชิ้นส่วน หลังคา ตาม Build Skill แล้วตรวจย้อนกลับหลายรอบ</td>
+<td>อ่านกริด ระดับ ขนาดชิ้นส่วน หลังคา ตาม Build Skill v2 (นับของก่อนสร้าง · ตาราง → ชิ้นส่วน · กระทบยอดแปลน-รูปตัด) แล้วตรวจย้อนกลับหลายรอบ</td>
 <td>โมเดล 3D + สิ่งที่อ่านได้ + สมมติฐาน</td>
+</tr>
+<tr>
+<td>🏛 AI Agent สถาปัตยกรรม</td>
+<td>⚡ AUTO GEN (ทำคู่กับการตรวจโครงสร้าง) หรือปุ่ม 🏛</td>
+<td>อ่านแปลนสถาปัตย์ทุกชั้น + ตารางประตู-หน้าต่าง → ผนัง ประตู หน้าต่าง ห้อง บนกริดเดียวกับโครงสร้าง</td>
+<td>โมเดลสถาปัตย์ 3D + ขั้นจำลองการก่อสร้าง (ก่อผนัง → ติดตั้งประตู-หน้าต่าง → พื้นผิว)</td>
 </tr>
 <tr>
 <td>✦ AI สั่งงาน</td>
@@ -529,9 +549,9 @@ ol li,ul li{margin:3px 0}
 </thead>
 <tbody>
 <tr>
-<td>Build Skill (การสร้างโมเดล)</td>
+<td>Build Skill v2 (การสร้างโมเดล + หมวด 12 อ่านให้ครบและตรงแบบ)</td>
 <td>แท็บ Skill</td>
-<td>AI อ่านแบบ + ตรวจย้อนกลับ</td>
+<td>AI อ่านแบบ + ตรวจย้อนกลับ — โหลดอัตโนมัติทันทีที่กดปุ่มทำงาน</td>
 </tr>
 <tr>
 <td>Skill ถอดแบบสถาปัตยกรรม</td>
@@ -685,7 +705,11 @@ ol li,ul li{margin:3px 0}
 </tr>
 <tr>
 <td>PDF หลายหน้าอ่านไม่หมด</td>
-<td>⚙ ตั้งค่า → จำนวนหน้า PDF ที่อ่านสูงสุด</td>
+<td>⚙ ตั้งค่า → จำนวนหน้า PDF ที่อ่านสูงสุด (สูงสุด 100) · PDF 100 หน้าใช้เวลาเตรียมภาพนานขึ้น</td>
+</tr>
+<tr>
+<td>โมเดลสถาปัตย์ไม่ตรงแบบ</td>
+<td>อัปโหลดแปลนสถาปัตย์ทุกชั้น + ตารางประตู-หน้าต่าง แล้วกด 🏛 อีกครั้ง · นอก Claude จะเป็นผนังรอบนอกอัตโนมัติ</td>
 </tr>
 <tr>
 <td>เปิดไฟล์ในเครื่องแล้วไม่มีแท็บ AutoCAD / คู่มือ</td>

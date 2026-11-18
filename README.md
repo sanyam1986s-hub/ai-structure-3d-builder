@@ -1,4 +1,4 @@
-# AI Structure 3D Builder v4.0
+# AI Structure 3D Builder v4.1
 
 เปิดใช้งาน: https://sanyam1986s-hub.github.io/ai-structure-3d-builder/
 
@@ -27,3 +27,8 @@
 
 - `index.html` = โปรแกรม (ไฟล์เดียว) · `AI_Structure_Build_Skill.md` = Build Skill v1.1 · `src/plan2boq_engine.js` = engine อ่านแบบ/QTO (ฝังอยู่ใน index.html แล้ว)
 - ฟีเจอร์ AI (วิเคราะห์แบบ/Auto Gen/สั่งงาน) ใช้ได้เมื่อเปิดใน Claude
+
+## v4.1 (2026-11-18)
+- **Skill ถอดแบบงานสถาปัตยกรรม** (`Arch_QTO_Skill.md`) ฝังในโปรแกรม แก้ไขได้ในแท็บ Skill — AI ถอดปริมาณต่อเนื่อง 2 รอบ: (1) ถอด + ใส่ราคา (รวมงานที่ Plan2BOQ วัดจากแบบ) (2) ไล่ Checklist หารายการที่ขาด
+- **Build Skill v1.2 §11** — รวมหลักการจาก Skill ยอดนิยมบน GitHub: DDC dwg-to-excel / cad-to-data / drawing-analyzer / verification-loop-construction (MIT), architectural-drawing-parser (terminalskills, Apache-2.0), construction-expert (pcl, Apache-2.0), structural-basics (the-claude-council, MIT), Skills-Architects structural-systems / construction-documentation (MIT)
+- สายงานต่อเนื่อง: อ่านแบบ (AI หรือ Plan2BOQ) → โมเดล 3D + ออกแบบ → BOQ ละเอียด → AI ถอด/ตรวจงานสถาปัตย์อัตโนมัติ (เมื่อเปิดใน Claude)

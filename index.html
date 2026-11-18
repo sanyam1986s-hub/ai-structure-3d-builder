@@ -332,6 +332,7 @@ table.t tr.qrow{cursor:pointer}table.t tr.qrow:hover td{background:var(--bg)}tab
 .qlink{color:#f97316;font-size:11px}.qpr{font-size:10.5px;border-radius:4px;padding:0 5px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}.qpr.AI{color:#7c3aed;border-color:#7c3aed66}.qpr.DEF{color:#0e7490;border-color:#0e749066}
 tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-direction:column;gap:6px}.qd-hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px}.qd-hd .sp{flex:1}.qd-hd .mono{font-size:11.5px;color:var(--muted)}
 .qd-x{display:flex;gap:4px;align-items:center;font-size:12px;cursor:pointer}.qd-t{font-size:11.5px;background:var(--panel,#fff)}.qd-t td.mono{font-size:11px}.qd-sub{font-size:12px}
+#acViews{display:flex;flex-wrap:wrap;gap:6px}#acViews legend{width:100%;margin-bottom:2px}#acViews .chk{display:inline-flex;gap:5px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}#acViews .chk:has(input:checked){border-color:var(--accent,#2563eb);background:#2563eb12}
 .airep{position:absolute;left:10px;bottom:64px;width:min(370px,calc(100% - 20px));max-height:62%;overflow:auto;background:#031428f2;color:#d8f7ff;border:1px solid #22d3ee99;border-radius:12px;padding:10px 12px;font-size:12.5px;box-shadow:0 0 26px #22d3ee44;display:none;z-index:5}
 .airep.on{display:block}.airep.min .ar-body{display:none}
 .airep .ar-hd{display:flex;align-items:center;gap:6px;margin-bottom:4px}.airep .ar-hd b{color:#a5f3fc}.airep .sp{flex:1}
@@ -395,7 +396,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
   <button class="btn sm" id="btnSettings" type="button">⚙ ตั้งค่า</button>
   <button class="btn sm" id="btnHolo" type="button">◈ สถานะ / Hologram</button>
   <button class="btn sm" id="btnReview" type="button">🛠 ตรวจสอบ / สั่งแก้</button>
-  <span class="pill" title="เวอร์ชันโปรแกรม">v4.3 · 2026-11-18</span>
+  <span class="pill" title="เวอร์ชันโปรแกรม">v4.9 · 2026-11-18</span>
   <span id="hdrStatus" class="pill">ตัวอย่าง</span>
 </header>
 
@@ -582,6 +583,8 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
     <button data-tab="boq">BOQ</button>
     <button data-tab="qto">BOQ ละเอียด</button>
     <button data-tab="dwg">แบบ 2D</button>
+    <button data-tab="acad">AutoCAD 2D</button>
+    <button data-tab="agents">✦ AI Teams</button>
     <button data-tab="exp">Export</button>
     <button data-tab="skill">Skill</button>
   </div>
@@ -676,6 +679,22 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
     <div id="dwView" style="border:1px solid var(--line);border-radius:8px;overflow:auto;background:#fff;min-height:200px;max-height:60vh"></div>
     <div id="dwStatus" class="status"></div>
   </div>
+  <div class="tabc" id="tab-acad">
+    <div><div style="font-size:15px;font-weight:700">AutoCAD 2D Writer — เขียนแบบลง AutoCAD โดยตรง</div>
+      <div class="status">สร้างโค้ด AutoLISP (คำสั่ง <b>AI3D2D</b>) หรือ Script (.scr สำหรับ AutoCAD LT) ที่วาดแบบลง Model space ขนาดจริง 1:1 แยก Layer มาตรฐาน S-* พร้อม Grid/Bubble, เส้นบอกระยะ (DIMLINEAR), ป้ายหน้าตัด, ระดับชั้น และตารางหน้าตัด — ตัวอักษรไทยเข้ารหัส \U+ จึงอ่านได้ทุกเวอร์ชัน</div></div>
+    <div class="row3"><label class="f" for="acUnit">หน่วยแบบ<select id="acUnit"><option value="mm" selected>มิลลิเมตร (mm)</option><option value="m">เมตร (m)</option></select></label>
+      <label class="f" for="acScale">มาตราส่วนตัวอักษร/Dim<select id="acScale"><option value="50">1:50</option><option value="100" selected>1:100</option><option value="200">1:200</option></select></label>
+      <label class="f" for="acFmt">รูปแบบ<select id="acFmt"><option value="lsp">AutoLISP .lsp (AutoCAD / LT 2024+)</option><option value="scr">Script .scr (AutoCAD LT รุ่นเก่า)</option></select></label></div>
+    <fieldset id="acViews" class="chips" style="border:0;padding:0;margin:0"><legend class="status">แบบที่จะวาด</legend>
+      <label class="chk"><input type="checkbox" value="ftg" checked> แปลนฐานราก</label><label class="chk"><input type="checkbox" value="plans" checked> แปลนโครงสร้างทุกชั้น</label><label class="chk"><input type="checkbox" value="roof" checked> แปลนหลังคา</label>
+      <label class="chk"><input type="checkbox" value="elx" checked> รูปด้านแนว X</label><label class="chk"><input type="checkbox" value="ely" checked> รูปด้านแนว Y</label><label class="chk"><input type="checkbox" value="sched" checked> ตารางหน้าตัด</label></fieldset>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="acSave" type="button">✍ ส่งออกไป AutoCAD</button><button class="btn" id="acCopy" type="button">📋 คัดลอกโค้ด</button><button class="btn" id="acPreview" type="button">↻ ดูตัวอย่าง</button></div>
+    <div class="note" style="font-size:12.5px"><b>วิธีใช้ (AutoLISP):</b> 1) AutoCAD พิมพ์ <code>APPLOAD</code> เลือกไฟล์ .lsp (หรือลากไฟล์วางในหน้าแบบ) 2) พิมพ์ <code>AI3D2D</code> Enter — วาดเสร็จจะ Zoom Extents ให้เอง · <b>Script:</b> พิมพ์ <code>SCRIPT</code> แล้วเลือกไฟล์ .scr · ถ้าได้ไฟล์ _lsp.txt / _scr.txt ให้เปลี่ยนนามสกุลก่อน</div>
+    <div id="acInfo" class="status"></div>
+    <div id="acPrev" style="border:1px solid var(--line);border-radius:8px;overflow:auto;max-height:60vh;background:#fff"></div>
+    <div id="acStatus" class="status" aria-live="polite"></div>
+  </div>
+  <div class="tabc" id="tab-agents"></div>
   <div class="tabc" id="tab-exp">
     <div class="note">ไฟล์ทั้งหมดเป็นโมเดลเบื้องต้น ก่อนใช้งานจริงต้องตรวจสอบหน้าตัด แนวแกน (Beta angle) จุดต่อ และ Load Case อีกครั้งในโปรแกรมวิเคราะห์</div>
     <div class="exp">
@@ -694,7 +713,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
 <!-- ===== HUD: start-up upload popup ===== -->
 <div class="hud" id="startModal" role="dialog" aria-modal="true" aria-labelledby="suTitle">
   <div class="panel" style="width:min(880px,100%)">
-    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.3</span></div>
+    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.9</span></div>
     <div class="hud-sub">อัปโหลดแบบ (รูปภาพ / PDF / DXF) แล้วกด Auto Gen — AI จะอ่านแบบ สร้างโมเดล ออกแบบเบื้องต้น และตรวจย้อนกลับจนครบ พร้อมแสดงสถานะเป็น %</div>
     <div class="hud-grid2">
       <div style="display:flex;flex-direction:column;gap:10px">
@@ -817,7 +836,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
 
 <div class="hud" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" style="z-index:96">
   <div class="panel" style="width:min(860px,100%)">
-    <div class="hud-hd"><span class="hud-dot live"></span><b id="helpTitle">📖 วิธีใช้ AI Structure 3D Builder v4.3</b><span class="hud-sp"></span><button class="hbtn" id="helpClose" type="button">ปิด</button></div>
+    <div class="hud-hd"><span class="hud-dot live"></span><b id="helpTitle">📖 วิธีใช้ AI Structure 3D Builder v4.9</b><span class="hud-sp"></span><button class="hbtn" id="helpClose" type="button">ปิด</button></div>
     <div class="help-body">
       <h4>⚡ ทางลัด: AUTO GEN — คลิกเดียวครบทุกคำสั่ง</h4>
       <ol>
@@ -2789,7 +2808,7 @@ function designRCBeam(L,wD0,wL,trib,M,p,k,lvName,qD,qL){
     const sReq=Vs>0?2*BARS[9]*fyt*d/Vs:99; const nb=Number.isFinite(rho)?barsFor(Math.max(rho,14/fy)*b*d,b,4,[12,16,20,25]):{layers:2};
     if(Number.isFinite(rho)&&rho<=rmax&&Vs<=2.1*Math.sqrt(fc)*b*d&&sReq>=10&&nb.layers===1){ if(!r||b*h<r.b*r.h) r={b,h,self,wD,wu,Mu,d,Rn,rho,rmax,Vu,phiVc,Vs}; break; } } if(r&&h>=r.h+15) break; h+=5; }
   if(!r){ b=Math.max(20,ceilTo(h/2,5)); r={b,h,self:2400*b*h/1e4,wD:wD0,wu:0,Mu:0,d:h-6,Rn:0,rho:NaN,rmax:rhoMax(fc,fy),Vu:0,phiVc:0,Vs:0,fail:true}; }
-  const {self,wD,wu,Mu,d,Rn,rho,rmax,Vu,phiVc,Vs}=r;
+  const {self,wD,wu,Mu,d,Rn,rho,rmax,Vu,phiVc,Vs}=r; b=r.b; // use the chosen width (loop variable may hold a later trial)
   steps.push(S('ข้อมูลคานวิกฤต (น้ำหนักพื้นเทียบเท่า)',`trib_eq = Σ S/3 (ขอบสั้น) หรือ S/3·(3 − m²)/2 (ขอบยาว)`,`L = ${f(L)} m, trib_eq = ${f(trib,3)} m, qD = ${f(qD,1)} kg/m², qL = ${f(qL,1)} kg/m² → wD0 = ${f(wD0,1)} kg/m (รวมผนัง), wL = ${f(wL,1)} kg/m`,'','ACI 318-63 §2002 / วสท. (Equivalent uniform load)'));
   steps.push(S('ความลึกต่ำสุด (ต่อเนื่องด้านเดียว)',`h_min = L/18.5 × (0.4 + fy/7000)`,`= ${f0(L*100)}/18.5 × (0.4 + ${fy}/7000) = ${f(hmin,1)} cm`,`ใช้ h = ${r.h} cm, b = ${r.b} cm (b ≥ h/2, เหล็กเรียงชั้นเดียว, ปลอก ≥ 10 cm)`,'ACI 318-99 Table 9.5(a)',r.h>=hmin));
   steps.push(S('น้ำหนักบรรทุก',`wD = qD·trib + ผนัง + 2400·b·h ; wu = ${fac.D}wD + ${fac.L}wL`,`wD = ${f(wD0,1)} + ${f(self,1)} = ${f(wD,1)} kg/m ; wu = ${fac.D}×${f(wD,1)} + ${fac.L}×${f(wL,1)} = ${f(wu,1)} kg/m`,'','ACI 318-99 §9.2.1'));
@@ -4231,7 +4250,7 @@ Reply with ONLY JSON:
 
 // ---------- project autosave / load ----------
 const PROJ_KEY='ai3d_project_v1';
-function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.3',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
+function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.9',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
 function autosave(){ try{ localStorage.setItem(PROJ_KEY,JSON.stringify(projectData())); const t=new Date().toLocaleTimeString('th-TH',{hour12:false}); $('#rpSave').textContent='บันทึกอัตโนมัติ '+t; return true; }catch(e){ $('#rpSave').textContent='บันทึกอัตโนมัติไม่ได้ — ใช้ปุ่มบันทึกโครงการ (.json)'; return false; } }
 function loadProject(j,from){ const p=normalizeParams({},j.params); Object.assign(p,j.params); state.chat=j.chat||[]; state.verify=j.verify||[]; fillForm(p); runPipeline(p);
   if(j.qto){ state.qto={...j.qto,geo:null}; rebuildQTO(true); const keep=new Map(j.qto.rows.map(r=>[r.sub+'|'+r.desc,r])); state.qto.rows.forEach(r=>{ const o=keep.get(r.sub+'|'+r.desc); if(o){ r.mat=o.mat; r.lab=o.lab; } }); renderQTO(); }
@@ -4669,6 +4688,7 @@ function exportDAE(){ const xe=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','
 <library_visual_scenes><visual_scene id="Scene" name="${xe(p.project_name)}">${nodes}</visual_scene></library_visual_scenes>
 <scene><instance_visual_scene url="#Scene"/></scene>
 </COLLADA>`; }
+window.__ai3d={get state(){ return state; },get downloadsFn(){ return downloadsFn; },get sampleFn(){ return sampleFn; },openModal:(n,d)=>openModal(n,d),renderQTO:()=>renderQTO()}; // bridge for add-on modules (acad.js)
 function colorFor(o){ const u=o.userData; const mode=$('#colorMode').value;
   if(mode==='mat') return MAT_COL[u.mat]??0x999999;
   if(mode==='util'){ const r=u.util??0; const c=new THREE.Color(); if(r<=0.5) c.setHSL(0.33,0.65,0.45); else if(r<=1) c.setHSL(0.33-0.33*(r-0.5)/0.5,0.75,0.5); else c.setHSL(0,0.85,0.5); return c.getHex(); }
@@ -4992,5 +5012,6 @@ $('#docGo').onclick = () => { DOC.ok = true; DOC.sig = docSig(); const S = DOC.a
   $('#docModal').classList.remove('on'); $('#startModal').classList.remove('on'); megaGo(); };
 ['#docBtn', '#suDocBtn'].forEach(q => { const b = $(q); if (b) b.onclick = () => openDoc(false); });
 </script>
+<script src="acad.js" defer></script>
 </body>
 </html>

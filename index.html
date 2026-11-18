@@ -167,6 +167,16 @@ ul.as{margin:0;padding-left:18px;font-size:12.5px;display:flex;flex-direction:co
 .mega:hover{transform:perspective(600px) rotateX(0) translateY(-2px) scale(1.04)}
 .mega:active{transform:scale(.98)}
 .mega small{display:block;font-weight:500;font-size:11px;letter-spacing:.2px;opacity:.9;margin-top:3px;text-shadow:none;color:#bdf6ff}
+.doc-tabs{display:flex;gap:4px}.doc-tabs .hbtn.on{background:#22d3ee33;border-color:#22d3ee}
+.doc-tbl{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}.doc-tbl th,.doc-tbl td{border-bottom:1px solid #22d3ee33;padding:5px 6px;text-align:left;vertical-align:top}.doc-tbl th{color:#7ff3ff;font-weight:600}
+.doc-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:6px 0}.doc-kpi div{border:1px solid #22d3ee44;border-radius:10px;padding:8px;background:#04122899}.doc-kpi b{display:block;font-size:20px;color:#a5f3fc;font-family:var(--f-mono)}.doc-kpi span{font-size:11.5px;opacity:.85}
+.doc-page{display:grid;grid-template-columns:150px 1fr;gap:12px;border:1px solid #22d3ee33;border-radius:10px;padding:10px;margin:8px 0;background:#04122866}.doc-page img{width:150px;max-height:150px;object-fit:contain;background:#fff;border-radius:6px}
+.doc-page dl{display:grid;grid-template-columns:120px 1fr;gap:3px 10px;margin:0;font-size:12.5px}.doc-page dt{color:#7ff3ff}.doc-page dd{margin:0}
+.doc-ai{border:1px solid #c084fc88;border-radius:10px;padding:10px;margin:8px 0;background:#2e10651f}.doc-ai h4{margin:0 0 6px;color:#e9d5ff}
+.doc-ok{color:#4ade80}.doc-warn{color:#fbbf24}.doc-bad{color:#f87171}
+@media (max-width:640px){.doc-page{grid-template-columns:1fr}.doc-page img{width:100%}}
+
+.attbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0}.attchip{display:inline-flex;gap:4px;align-items:center;font-size:12px;padding:3px 4px 3px 10px;border:1px solid #22d3ee88;border-radius:999px;background:#22d3ee1a}.attchip button{border:0;background:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;padding:0 4px}textarea.over{outline:2px dashed #22d3ee}
 #btnMega{min-width:200px;white-space:nowrap;flex-shrink:0}#btnHelp{white-space:nowrap;flex-shrink:0}
 .mega.block{display:block;width:100%;margin:4px 0 10px;padding:14px 16px;font-size:17px}
 .mega.busy{animation:megaFlow 1.2s linear infinite,megaPulse .8s ease-in-out infinite}
@@ -385,7 +395,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
   <button class="btn sm" id="btnSettings" type="button">⚙ ตั้งค่า</button>
   <button class="btn sm" id="btnHolo" type="button">◈ สถานะ / Hologram</button>
   <button class="btn sm" id="btnReview" type="button">🛠 ตรวจสอบ / สั่งแก้</button>
-  <span class="pill" title="เวอร์ชันโปรแกรม">v4.2 · 2026-11-18</span>
+  <span class="pill" title="เวอร์ชันโปรแกรม">v4.3 · 2026-11-18</span>
   <span id="hdrStatus" class="pill">ตัวอย่าง</span>
 </header>
 
@@ -399,6 +409,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
     </div>
     <input id="fileIn" type="file" multiple accept="image/*,.pdf,.dxf,.json" hidden>
     <div id="files" class="files"></div>
+    <button class="btn" id="docBtn" type="button" style="width:100%;margin:6px 0">📋 ตรวจสอบเอกสารแนบ — จำนวนหน้า · เนื้อหา · รายงานสรุป/ละเอียด</button>
     <label class="f" for="userNotes">ข้อมูลเพิ่มเติมสำหรับ AI
       <textarea id="userNotes" placeholder="เช่น อาคารโรงงาน 2 ชั้น ชั้นละ 4 ม. หลังคาเหล็ก span 16 ม. ใช้เป็นคลังสินค้า"></textarea>
     </label>
@@ -589,13 +600,15 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
       <button class="chip" type="button">ถอดปริมาณ BOQ ละเอียด พร้อมราคา</button>
     </div>
     <div class="chat" id="chLog" aria-live="polite"></div>
-    <label class="f" for="chIn">คำสั่ง<textarea id="chIn" rows="3" placeholder="เช่น เพิ่มเสาที่ 2-B, ความสูงชายคาเป็น 7 ม., เปลี่ยนพื้นชั้น 2 เป็น Hollow core, เพิ่มชั้นลอยที่ช่วง 1-2/A-B สูง 2.5 ม."></textarea></label>
+    <label class="f" for="chIn">คำสั่ง<textarea id="chIn" rows="3" placeholder="(📎 แนบ / วาง Ctrl+V / ลากไฟล์แบบมาวางที่นี่ได้) เช่น เพิ่มเสาที่ 2-B, ความสูงชายคาเป็น 7 ม., เปลี่ยนพื้นชั้น 2 เป็น Hollow core, เพิ่มชั้นลอยที่ช่วง 1-2/A-B สูง 2.5 ม."></textarea></label>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="chAttBtn" type="button" title="แนบรูป / PDF / DXF ให้ AI อ่านพร้อมคำสั่งนี้ (วางภาพด้วย Ctrl+V หรือ ลากไฟล์มาวางในช่องคำสั่งได้)">📎 แนบไฟล์</button><input type="file" id="chFile" accept="image/*,.pdf,.dxf" multiple hidden>
       <button class="btn pri" id="chSend" type="button">ส่งคำสั่ง</button>
       <button class="btn" id="chUndo" type="button" disabled>↶ ย้อนกลับ</button>
       <label class="f" for="chImg" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="chImg" checked> แนบภาพแบบ + ภาพโมเดลให้ AI</label>
       <button class="btn sm" id="chClear" type="button" style="margin-left:auto">ล้างบทสนทนา</button>
     </div>
+    <div class="attbar" id="chAtt" aria-live="polite"></div>
     <div id="chStatus" class="status"></div>
   </div>
   <div class="tabc" id="tab-calc"></div>
@@ -681,12 +694,13 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
 <!-- ===== HUD: start-up upload popup ===== -->
 <div class="hud" id="startModal" role="dialog" aria-modal="true" aria-labelledby="suTitle">
   <div class="panel" style="width:min(880px,100%)">
-    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.2</span></div>
+    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.3</span></div>
     <div class="hud-sub">อัปโหลดแบบ (รูปภาพ / PDF / DXF) แล้วกด Auto Gen — AI จะอ่านแบบ สร้างโมเดล ออกแบบเบื้องต้น และตรวจย้อนกลับจนครบ พร้อมแสดงสถานะเป็น %</div>
     <div class="hud-grid2">
       <div style="display:flex;flex-direction:column;gap:10px">
         <div id="suDrop" class="hud-drop" tabindex="0" role="button" aria-label="เลือกไฟล์แบบ"><div class="hud-drop-ic">⇪</div><b>ลากไฟล์มาวาง หรือคลิกเพื่อเลือก</b><span>JPG · PNG · PDF · DXF (DWG ให้ Save As DXF)</span></div>
         <div id="suFiles" class="hud-files"></div>
+        <button class="hbtn" id="suDocBtn" type="button" style="margin:6px 0">📋 ตรวจสอบเอกสารแนบ (สรุป / ละเอียด)</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <label class="hud-f" for="suNotes">ข้อมูลเพิ่มเติมสำหรับ AI<textarea id="suNotes" rows="4" placeholder="เช่น โรงงาน 2 ชั้น หลังคา Truss เสาเข็ม I-0.22"></textarea></label>
@@ -721,7 +735,8 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
         <div class="rv-hd"><b>โต้ตอบกับ AI</b><span class="hud-sp"></span><button class="hbtn sm" id="rvUndo" type="button">↶ ย้อนกลับ</button></div>
         <div id="rvChat" class="rv-chat"></div>
         <label class="hud-f" for="rvIn">คำสั่งเพิ่มเติม (ปรับ / แก้ไข / เพิ่มส่วนที่ขาด)<textarea id="rvIn" rows="3" placeholder="เช่น เพิ่มคานซอยกลางช่วง 2-3/A-B ชั้น 2, เปลี่ยนฐานรากเป็นเสาเข็ม 30 ตัน/ต้น"></textarea></label>
-        <div class="hud-actions"><label class="hud-chk" for="rvImg"><input type="checkbox" id="rvImg" checked> แนบภาพแบบ + โมเดล</label><span class="hud-sp"></span><button class="hbtn pri" id="rvSend" type="button">ส่งคำสั่ง</button></div>
+        <div class="attbar" id="rvAtt"></div>
+        <div class="hud-actions"><label class="hud-chk" for="rvImg"><input type="checkbox" id="rvImg" checked> แนบภาพแบบ + โมเดล</label><button class="hbtn" id="rvAttBtn" type="button" title="แนบรูป / PDF / DXF ให้ AI อ่านพร้อมคำสั่งนี้">📎 แนบไฟล์</button><input type="file" id="rvFile" accept="image/*,.pdf,.dxf" multiple hidden><span class="hud-sp"></span><button class="hbtn pri" id="rvSend" type="button">ส่งคำสั่ง</button></div>
         <div id="rvStatus" class="hud-msg" style="color:#7dd3fc"></div>
       </div>
     </div>
@@ -782,15 +797,34 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
   </div>
 </div>
 <!-- ===== HUD: progress + hologram build sequence ===== -->
+<div class="hud" id="docModal" role="dialog" aria-modal="true" aria-labelledby="docTitle" style="z-index:95">
+  <div class="panel" style="width:min(1100px,100%)">
+    <div class="hud-hd"><span class="hud-dot live" id="docDot"></span><b id="docTitle">📋 ตรวจสอบเอกสารแนบ — ก่อนส่ง AUTO GEN</b><span class="hud-sp"></span>
+      <div class="doc-tabs" role="tablist"><button class="hbtn on" data-dt="sum" type="button">แบบสรุป</button><button class="hbtn" data-dt="det" type="button">แบบละเอียด</button></div>
+      <button class="hbtn" id="docClose" type="button">ปิด</button></div>
+    <div id="docStatus" class="hud-msg" style="color:#7dd3fc;margin:6px 0"></div>
+    <div id="docSum"></div>
+    <div id="docDet" hidden></div>
+    <div class="hud-actions" style="margin-top:10px">
+      <label class="hud-chk" for="docEvery"><input type="checkbox" id="docEvery" checked> แสดงรายงานนี้ก่อน Auto Gen ทุกครั้ง</label>
+      <button class="hbtn" id="docAI" type="button">✦ ให้ AI อ่านเอกสาร</button>
+      <button class="hbtn" id="docExp" type="button">💾 ส่งออกรายงาน (.md)</button>
+      <span class="hud-sp"></span>
+      <button class="hbtn mega" id="docGo" type="button">⚡ ยืนยัน + AUTO GEN<small>ใช้ผลอ่านเอกสารนี้ต่อ</small></button>
+    </div>
+  </div>
+</div>
+
 <div class="hud" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" style="z-index:96">
   <div class="panel" style="width:min(860px,100%)">
-    <div class="hud-hd"><span class="hud-dot live"></span><b id="helpTitle">📖 วิธีใช้ AI Structure 3D Builder v4.2</b><span class="hud-sp"></span><button class="hbtn" id="helpClose" type="button">ปิด</button></div>
+    <div class="hud-hd"><span class="hud-dot live"></span><b id="helpTitle">📖 วิธีใช้ AI Structure 3D Builder v4.3</b><span class="hud-sp"></span><button class="hbtn" id="helpClose" type="button">ปิด</button></div>
     <div class="help-body">
       <h4>⚡ ทางลัด: AUTO GEN — คลิกเดียวครบทุกคำสั่ง</h4>
       <ol>
         <li><b>อัปโหลดแบบ</b> — ลากไฟล์มาวางในข้อ 01 หรือหน้าต่างเริ่มต้น: รูป JPG/PNG, PDF (หลายหน้า), DXF (DWG ให้ Save As DXF ก่อน) · ใส่หลายไฟล์ได้ เช่น แปลน + รูปตัด + แบบหลังคา</li>
         <li><b>กด ⚡ AUTO GEN</b> (ปุ่มเรืองแสงด้านบน) — โปรแกรมทำต่อเนื่องเองจนจบ:
-          <div class="flow">อ่านแบบ (AI + Skill) → ตรวจย้อนกลับหลายรอบ → สร้างโมเดล 3D → ออกแบบเบื้องต้น ACI / AISC / AISI → Hologram → แบบก่อสร้าง 2D → Plan2BOQ วัดผนัง/ห้อง/ช่องเปิด → AI ถอด BOQ งานสถาปัตย์ 2 รอบ → <b>รายงานสรุป</b></div></li>
+          <div class="flow">📋 ตรวจสอบเอกสาร → อ่านแบบ (AI + Skill) → ตรวจย้อนกลับหลายรอบ → สร้างโมเดล 3D → ออกแบบเบื้องต้น ACI / AISC / AISI → Hologram → แบบก่อสร้าง 2D → Plan2BOQ วัดผนัง/ห้อง/ช่องเปิด → AI ถอด BOQ งานสถาปัตย์ 2 รอบ → <b>รายงานสรุป</b></div></li>
+        <li><b>📋 ตรวจสอบเอกสารแนบ</b> (ขึ้นเองก่อน Auto Gen) — จำนวนไฟล์/หน้า ขนาด ชนิดแผ่น มาตราส่วน เลขแผ่น ระดับ รหัสชิ้นส่วน ขนาดหน้าตัด · ใน Claude ให้ AI อ่านเนื้อหาทุกหน้าและสรุปความพร้อม แผ่นที่ขาด ข้อควรระวัง · ดู "แบบสรุป" / "แบบละเอียด" · ส่งออก .md · กด "⚡ ยืนยัน + AUTO GEN"</li>
         <li><b>อ่านรายงานสรุป</b> — ผลออกแบบ (OK/NG), ประเด็นที่ต้องตรวจ, ปริมาณ และราคา พร้อมปุ่ม Export ทุกชนิด</li>
       </ol>
       <h4>🌐 โหมดการทำงาน</h4>
@@ -801,6 +835,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
       <h4>🛠 ตรวจและแก้ไข</h4>
       <ul>
         <li><b>✦ AI สั่งงาน</b> — พิมพ์คำสั่งภาษาไทย เช่น "เพิ่มคานซอยกลางช่อง B-C ชั้น 2", "เปลี่ยนหลังคาเป็น Truss Pratt"</li>
+        <li><b>📎 แนบไฟล์ระหว่างสั่งแก้</b> — กด 📎 แนบไฟล์ / วางภาพ (Ctrl+V) / ลากไฟล์มาวางในช่องคำสั่ง เช่น รูปตัดเพิ่มเติม แบบขยาย หรือภาพหน้างาน แล้วพิมพ์คำสั่ง → AI อ่านไฟล์นั้นก่อนแล้วแก้โมเดลตาม · ไฟล์จะถูกเก็บในรายการแบบของโครงการด้วย</li>
         <li><b>🛠 ตรวจสอบ / สั่งแก้</b> — เลือกประเด็นจากรายการแล้วสั่ง AI แก้ทีละข้อ · ย้อนกลับได้</li>
         <li><b>ข้อ 02 พารามิเตอร์</b> — แก้กริด ระดับชั้น วัสดุ น้ำหนักบรรทุก เองแล้วกด "สร้างโมเดล + ออกแบบเบื้องต้น"</li>
         <li><b>BOQ ละเอียด</b> — แตะเส้นผนังที่ผิดบนภาพ Plan2BOQ เพื่อลบ (เช่น เฟอร์นิเจอร์ ต้นไม้) · แก้ราคาได้ทุกช่อง · Factor F</li>
@@ -3550,13 +3585,13 @@ async function handleFiles(list){
   let k=0; for(const file of list){ k++; $('#suMsg').textContent=''; $('#suDrop').querySelector('b').textContent=`กำลังอ่าน ${file.name} (${k}/${list.length})…`;
     const ext=file.name.split('.').pop().toLowerCase();
     try{
-      if(file.type.startsWith('image/')){ const blob=await normalizeImage(file); state.sources.push({name:file.name,kind:'รูปภาพ',images:[blob],text:'',thumb:URL.createObjectURL(blob)}); }
+      if(file.type.startsWith('image/')&&!['dxf','dwg','pdf'].includes(ext)){ const blob=await normalizeImage(file); state.sources.push({name:file.name,kind:'รูปภาพ',images:[blob],text:'',thumb:URL.createObjectURL(blob)}); }
       else if(ext==='pdf'){ $('#aiStatus').textContent='กำลังอ่าน PDF…'; state.sources.push(await readPDF(file)); $('#aiStatus').textContent=''; }
       else if(ext==='dxf'){ $('#aiStatus').textContent='กำลังอ่าน DXF…'; state.sources.push(await readDXF(file)); $('#aiStatus').textContent=''; }
       else if(ext==='json'){ const j=JSON.parse(await file.text()); if(j&&j.params){ loadProject(j,file.name); continue; } $('#aiStatus').textContent='ไฟล์ .json นี้ไม่ใช่ไฟล์โครงการของโปรแกรม'; }
       else if(ext==='dwg'){ $('#aiStatus').textContent='ไฟล์ DWG อ่านในเว็บไม่ได้ — เปิดใน AutoCAD แล้วใช้ Save As → DXF'; $('#aiStatus').className='status err'; }
       else { $('#aiStatus').textContent=`ไม่รองรับไฟล์ .${ext}`; }
-      const last=state.sources[state.sources.length-1]; if(last&&!last.tiles) await addTiles(last); renderFiles();
+      const last=state.sources[state.sources.length-1]; if(last&&!last.size) last.size=file.size; if(last&&!last.tiles) await addTiles(last); renderFiles();
     }catch(e){ console.error(e); $('#aiStatus').textContent=`อ่านไฟล์ ${file.name} ไม่สำเร็จ: ${e.message||e}`; $('#aiStatus').className='status err'; }
   }
   renderFiles(); $('#suDrop').querySelector('b').textContent='ลากไฟล์มาวาง หรือคลิกเพื่อเลือก (เพิ่มได้อีก)';
@@ -3951,7 +3986,7 @@ suDrop.ondrop=e=>{e.preventDefault();suDrop.classList.remove('over');handleFiles
 $('#suShow').onchange=()=>{ SET.showStart=$('#suShow').checked; saveSettings(); };
 $('#suClose').onclick=()=>$('#startModal').classList.remove('on');
 $('#suTypes').onclick=()=>openTypes('lock');
-$('#suAuto').onclick=async()=>{ if(!sampleFn) await ensureAI(); if(!sampleFn){ $('#startModal').classList.remove('on'); autoGenOffline(); return; }
+$('#suAuto').onclick=async()=>{ if(state.sources.length&&SET.docFirst!==false&&!(DOC.ok&&DOC.sig===docSig())){ $('#userNotes').value=$('#suNotes').value; $('#startModal').classList.remove('on'); openDoc(true); return; } if(!sampleFn) await ensureAI(); if(!sampleFn){ $('#startModal').classList.remove('on'); autoGenOffline(); return; }
   if(!state.sources.length&&!$('#suNotes').value.trim()){ $('#suMsg').textContent='อัปโหลดแบบอย่างน้อย 1 ไฟล์ หรือพิมพ์รายละเอียดอาคารก่อน'; return; }
   $('#suMsg').textContent=''; $('#startModal').classList.remove('on'); startAI({auto:true}); };
 function openStart(){ $('#suNotes').value=$('#userNotes').value; $('#suType').value=$('#aiType').value; $('#suShow').checked=SET.showStart; renderFiles(); $('#startModal').classList.add('on'); }
@@ -4196,7 +4231,7 @@ Reply with ONLY JSON:
 
 // ---------- project autosave / load ----------
 const PROJ_KEY='ai3d_project_v1';
-function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.2',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
+function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.3',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
 function autosave(){ try{ localStorage.setItem(PROJ_KEY,JSON.stringify(projectData())); const t=new Date().toLocaleTimeString('th-TH',{hour12:false}); $('#rpSave').textContent='บันทึกอัตโนมัติ '+t; return true; }catch(e){ $('#rpSave').textContent='บันทึกอัตโนมัติไม่ได้ — ใช้ปุ่มบันทึกโครงการ (.json)'; return false; } }
 function loadProject(j,from){ const p=normalizeParams({},j.params); Object.assign(p,j.params); state.chat=j.chat||[]; state.verify=j.verify||[]; fillForm(p); runPipeline(p);
   if(j.qto){ state.qto={...j.qto,geo:null}; rebuildQTO(true); const keep=new Map(j.qto.rows.map(r=>[r.sub+'|'+r.desc,r])); state.qto.rows.forEach(r=>{ const o=keep.get(r.sub+'|'+r.desc); if(o){ r.mat=o.mat; r.lab=o.lab; } }); renderQTO(); }
@@ -4276,17 +4311,17 @@ async function chatSend(override,opt={}){
   if(/แบบ\s*2\s*d|autocad|dxf|ออโต้แคด|แบบก่อสร้าง/i.test(instr)&&!/เพิ่ม|แก้|เปลี่ยน|ปรับ/.test(instr)){ state.chat.push({role:'user',text:instr}); $('#chIn').value=''; await dwGenerate();
     state.chat.push({role:'assistant',text:`สร้างแบบ 2D แล้ว ${state.sheets.length} แผ่น (${state.sheets.map(s=>s.no).join(', ')}) — ดูและส่งออก AutoCAD ได้ที่แท็บ "แบบ 2D"`}); chatRender(); switchTab('dwg'); return; }
   if(!sampleFn) await ensureAI();
-  if(!sampleFn){ $('#chStatus').innerHTML='การสั่งงาน AI ใช้ได้ใน Claude — <a href="'+CLAUDE_URL+'" target="_blank" rel="noopener">🚀 เปิดใน Claude</a>'; return; if(0) $('#chStatus').textContent='การสั่งงาน AI ใช้ได้เมื่อเปิดหน้านี้ใน Claude'; return; }
+  if(!sampleFn){ $('#chStatus').innerHTML='การสั่งงาน AI ใช้ได้ใน Claude — <a href="'+CLAUDE_URL+'" target="_blank" rel="noopener">🚀 เปิดใน Claude</a>'+(state.chatAtt.length?' · ไฟล์ที่แนบถูกเพิ่มเข้ารายการแบบแล้ว ใช้กับ ⚡ AUTO GEN (โหมดไม่ใช้ AI) ได้':''); return; if(0) $('#chStatus').textContent='การสั่งงาน AI ใช้ได้เมื่อเปิดหน้านี้ใน Claude'; return; }
   if(chCtl){ chCtl.abort(); return; } if(aiCtl){ $('#chStatus').textContent='รอให้การวิเคราะห์ AI ที่กำลังทำงานเสร็จก่อน'; return; }
-  state.chat.push({role:'user',text:instr}); if(typeof override!=='string') $('#chIn').value=''; chatRender();
+  const attN=state.chatAtt.length; state.chat.push({role:'user',text:instr+(attN?`\n📎 ${state.chatAtt.map(s=>s.name).join(', ')}`:'')}); if(typeof override!=='string') $('#chIn').value=''; chatRender();
   const pend={role:'assistant',text:'AI กำลังคิด…'}; state.chat.push(pend); chatRender();
   chCtl=new AbortController(); $('#chSend').textContent='หยุด'; activeSkill=($('#skText').value||'').trim()||DEFAULT_SKILL; const t0=Date.now();
   try{
-    let imgs=[]; if(opt.img??$('#chImg').checked){ let lim=null; try{lim=await sampleFn.limits();}catch(e){} const B=lim?.images?.maxCount||0;
-      if(B){ $('#chStatus').textContent='กำลังวาดภาพโมเดลเพื่อแนบให้ AI…'; const mi=await modelImages(); imgs=pickImages(B,B>=6?mi:mi.slice(0,2),(state.chat.length%5)+1); } }
+    let imgs=[]; if(attN||(opt.img??$('#chImg').checked)){ let lim=null; try{lim=await sampleFn.limits();}catch(e){} const B=lim?.images?.maxCount||0;
+      if(B){ $('#chStatus').textContent='กำลังวาดภาพโมเดลเพื่อแนบให้ AI…'; const mi=await modelImages(); imgs=pickImages(B,B>=6?mi:mi.slice(0,2),(state.chat.length%5)+1); const at=attTake(B); if(at.length) imgs=[...at,...imgs.filter(x=>!at.some(a=>a.blob===x.blob))].slice(0,B); } }
     $('#chStatus').textContent='AI กำลังประมวลผลคำสั่ง…';
     const o={signal:chCtl.signal,modelTier:SET.tier||'complex',cache:false,onText:({text})=>{ pend.text=`AI กำลังเขียนคำตอบ… (${text.length.toLocaleString()} ตัวอักษร)`; chatRender(); }}; if(imgs.length) o.images=imgs.map(x=>x.blob);
-    const res=await sampleFn.json(chatPrompt(instr,imgs.map(x=>x.label)),o);
+    const res=await sampleFn.json(chatPrompt(instr+attNote(),imgs.map(x=>x.label)),o); state.chatAtt=[]; attRender();
     pend.text=String(res?.reply||'ดำเนินการแล้ว'); pend.changes=Array.isArray(res?.changes)?res.changes.map(String).slice(0,20):[];
     const prevIssues=state.aiIssues;
     if(Array.isArray(res?.issues)) state.aiIssues=res.issues.map(i=>({severity:['high','medium','low'].includes(i?.severity)?i.severity:'medium',item:String(i?.item||''),fix:String(i?.fix||'')})).filter(i=>i.item).slice(0,40);
@@ -4835,7 +4870,7 @@ async function autoGenOffline() {
   } catch (e) { console.error(e); const run = PG.steps.find(s => s.status === 'run'); if (run) PG.fail(run.id, e.message); else PG.finish(false, e.message); }
   finally { megaBusy(false); } }
 function megaBusy(on) { $$('.mega').forEach(b => b.classList.toggle('busy', on)); }
-async function megaGo() { if (aiCtl || PG.running) { PG.open(); return; }
+async function megaGo() { if (aiCtl || PG.running) { PG.open(); return; } if (docGate()) return;
   if (!state.sources.length && !$('#userNotes').value.trim()) { openStart(); $('#suMsg').textContent = 'อัปโหลดแบบ (รูป / PDF / DXF) แล้วกด ⚡ AUTO GEN — หรือกด "📖 วิธีใช้"'; return; }
   if (!sampleFn) await ensureAI(); if (sampleFn) { megaBusy(true); try { await startAI({ auto: true }); } finally { megaBusy(false); } } else autoGenOffline(); }
 ['#btnMega', '#btnMega2'].forEach(id => { const b = $(id); if (b) b.onclick = megaGo; });
@@ -4844,6 +4879,118 @@ const HELP_KEY = 'ai3d_help_seen_v42';
 function openHelp() { $('#helpModal').classList.add('on'); }
 $('#btnHelp').onclick = openHelp; $('#helpClose').onclick = () => { $('#helpModal').classList.remove('on'); try { if ($('#helpNoShow').checked) localStorage.setItem(HELP_KEY, '1'); } catch (e) {} };
 $('#helpGo').onclick = () => { $('#helpClose').click(); megaGo(); };
+
+// ================================================================
+// v4.3 📎 แนบไฟล์ระหว่างบทสนทนาแก้ไข (แท็บ ✦ AI สั่งงาน + หน้าต่าง ตรวจสอบ/สั่งแก้)
+// ไฟล์ที่แนบ → เข้า state.sources (ใช้ต่อใน Auto Gen / Plan2BOQ / BOQ) + ส่งให้ AI เป็นภาพแรกของข้อความถัดไป
+// ================================================================
+state.chatAtt = [];
+function attRender() { const html = state.chatAtt.map((s, i) => `<span class="attchip" title="${esc(s.kind || '')}">📎 ${esc(s.name)}<button type="button" data-att="${i}" aria-label="เอาไฟล์ ${esc(s.name)} ออกจากข้อความนี้">×</button></span>`).join('');
+  ['#chAtt', '#rvAtt'].forEach(q => { const el = $(q); if (!el) return; el.innerHTML = html; el.querySelectorAll('[data-att]').forEach(b => b.onclick = () => { state.chatAtt.splice(+b.dataset.att, 1); attRender(); }); }); }
+async function attAdd(files) { files = [...(files || [])].filter(f => f && f.size); if (!files.length) return; const n0 = state.sources.length;
+  const st = $('#chStatus'); st.textContent = `กำลังอ่านไฟล์แนบ ${files.length} ไฟล์…`; await handleFiles(files);
+  const added = state.sources.slice(n0); state.chatAtt.push(...added); attRender();
+  st.textContent = added.length ? `📎 แนบแล้ว ${added.map(s => s.name).join(', ')} — พิมพ์คำสั่งแล้วกดส่ง (AI จะอ่านไฟล์นี้ก่อน)` : 'อ่านไฟล์แนบไม่สำเร็จ'; }
+function attTake(B) { const att = state.chatAtt.flatMap(s => s.images.map((b, i) => ({ blob: b, label: `📎 ไฟล์แนบใหม่ในข้อความนี้: ${s.name}${s.images.length > 1 ? ' หน้า ' + (i + 1) : ''}` }))); return B ? att.slice(0, B) : att; }
+function attNote() { if (!state.chatAtt.length) return ''; const tx = state.chatAtt.map(s => s.text ? `### ${s.name}\n${s.text.slice(0, 6000)}` : '').filter(Boolean).join('\n');
+  return `\n\n[ATTACHED IN THIS MESSAGE: ${state.chatAtt.map(s => s.name).join(', ')} — the engineer attached these files with this instruction. Read them first (they are the first images) and use them as the primary source for this edit; keep everything else in the model unless the files show otherwise.]${tx ? '\n' + tx : ''}`; }
+for (const [btn, inp, box] of [['#chAttBtn', '#chFile', '#chIn'], ['#rvAttBtn', '#rvFile', '#rvIn']]) {
+  const b = $(btn), i = $(inp), t = $(box); if (!b || !i) continue;
+  b.onclick = () => i.click(); i.onchange = async () => { await attAdd(i.files); i.value = ''; };
+  t.addEventListener('paste', e => { const fs = [...(e.clipboardData?.files || [])]; if (fs.length) { e.preventDefault(); attAdd(fs); } });
+  t.addEventListener('dragover', e => { e.preventDefault(); t.classList.add('over'); }); t.addEventListener('dragleave', () => t.classList.remove('over'));
+  t.addEventListener('drop', e => { e.preventDefault(); t.classList.remove('over'); attAdd(e.dataTransfer.files); }); }
+attRender();
+
+// ================================================================
+// v4.3 📋 ตรวจสอบเอกสารแนบ — รายงานแบบสรุป / แบบละเอียด ก่อนส่ง AUTO GEN
+// ระดับ 1 (โปรแกรม): จำนวนหน้า ขนาดภาพ ข้อความ PDF ชนิดแผ่น มาตราส่วน เลขแผ่น ระดับ รหัสชิ้นส่วน ขนาดหน้าตัด DXF layer · Plan2BOQ ผนัง
+// ระดับ 2 (AI ใน Claude): อ่านทุกหน้า → ชนิดแผ่น ชื่อ กริด ระดับ ชิ้นส่วน มิติ วัสดุ ความชัด สิ่งที่ขาด + สรุปความพร้อม
+// ================================================================
+const DOC = { local: null, ai: null, sig: '', ok: false, tab: 'sum', after: null };
+const docSig = () => state.sources.map(s => s.name + ':' + s.images.length).join('|');
+const SHEET_KW = [['แปลนพื้น / Plan', /แปลน|\bplan\b|floor/i], ['รูปตัด / Section', /รูปตัด|section/i], ['รูปด้าน / Elevation', /รูปด้าน|elevation/i], ['หลังคา / Roof', /หลังคา|roof|truss|โครงถัก|จันทัน/i], ['ฐานราก / Foundation', /ฐานราก|footing|foundation|เสาเข็ม|pile/i], ['ตาราง / Schedule', /ตาราง|schedule/i], ['แบบขยาย / Detail', /ขยาย|detail/i], ['ไฟฟ้า / Electrical', /ไฟฟ้า|electrical/i], ['สุขาภิบาล / Sanitary', /สุขาภิบาล|ประปา|sanitary|plumbing/i]];
+function docPageTexts(s) { const out = {}; (s.text || '').split('\n').forEach(l => { const m = l.match(/^\[PDF page (\d+)[^\]]*\]: (.*)$/); if (m) out[+m[1]] = m[2]; }); return out; }
+function docText(t) { const vals = (t || '').split('; ').map(x => x.replace(/@\([^)]*\)$/, '').trim()).filter(Boolean); const j = vals.join(' ');
+  const u = (re, n) => [...new Set(j.match(re) || [])].slice(0, n);
+  return { nText: vals.length, types: SHEET_KW.filter(([, re]) => re.test(j)).map(([n]) => n), scale: u(/1\s?[:：]\s?\d{2,4}/g, 4).map(x => x.replace(/\s/g, '')), sheet: u(/\b[ASEMP]-?\d{1,3}\b/g, 6),
+    dims: vals.filter(v => /^\d{3,6}$/.test(v.replace(/[,.]/g, ''))).length, levels: u(/[+±\-]\s?\d+\.\d{2}\b/g, 8), marks: u(/\b(?:GB|RB|ST|C|B|F|S|P)\d{1,2}[A-Z]?\b/g, 24),
+    sizes: u(/\b\d{2,3}\s?[xX×]\s?\d{2,3}\b(?:\s?(?:cm|mm|ซม\.?|มม\.?))?/g, 12), steel: u(/\b(?:H|I|C|□|LC|WF)\s?-?\s?\d{2,3}\s?[xX×]\s?\d{2,3}[\d.xX× ]*/g, 10) }; }
+async function docLocal() { const rows = [];
+  for (const s of state.sources) { const pt = docPageTexts(s), pages = [];
+    for (let i = 0; i < s.images.length; i++) { let w = 0, h = 0; try { const bm = await createImageBitmap(s.images[i]); w = bm.width; h = bm.height; bm.close && bm.close(); } catch (e) {}
+      pages.push({ i: i + 1, w, h, url: URL.createObjectURL(s.images[i]), ...docText(s.raw ? (s.text || '').replace(/[\n,]+/g, '; ') : pt[i + 1]) }); }
+    let p2 = null;
+    if (s.raw) { try { const d = P2B.parseDXF(s.raw), cnt = {}; d.entities.forEach(e => cnt[e.type] = (cnt[e.type] || 0) + 1); p2 = { dxf: true, layers: d.layers, cnt, ins: d.insunits }; } catch (e) {} }
+    else if (s.images[0]) { try { const img = await p2BlobImg(s.images[0], 1200); const r = P2B.analyzeRaster(img); p2 = { walls: r.segs.length, k: r.k, colour: r.maxGray < 255 }; } catch (e) {} }
+    const nPdf = +(String(s.kind).match(/PDF (\d+)/) || [])[1] || 0;
+    rows.push({ name: s.name, kind: s.kind, size: s.size || 0, nPages: nPdf || s.images.length, nImg: s.images.length, nTile: s.tiles?.length || 0, hasText: !!s.text, textLen: (s.text || '').length, pages, p2 }); }
+  return rows; }
+const kb = n => n ? (n > 1e6 ? (n / 1e6).toFixed(2) + ' MB' : Math.round(n / 1024) + ' KB') : '—';
+const lst = a => a && a.length ? a.map(esc).join(', ') : '—';
+function docRender() { const L = DOC.local || [], A = DOC.ai, S = A?.summary || null;
+  const nP = L.reduce((a, r) => a + r.nPages, 0), nI = L.reduce((a, r) => a + r.nImg, 0), nT = L.filter(r => r.hasText).length;
+  const types = [...new Set(L.flatMap(r => r.pages.flatMap(p => p.types)))];
+  let h = `<div class="doc-kpi"><div><b>${L.length}</b><span>ไฟล์</span></div><div><b>${nP}</b><span>หน้า / แผ่นทั้งหมด</span></div><div><b>${nI}</b><span>ภาพที่ส่งให้ AI (+ขยาย ${L.reduce((a, r) => a + r.nTile, 0)})</span></div><div><b>${nT}/${L.length}</b><span>ไฟล์ที่มีข้อความ/พิกัดอ่านได้</span></div><div><b>${types.length}</b><span>ชนิดแผ่นที่พบจากข้อความ</span></div></div>`;
+  if (S) h += `<div class="doc-ai"><h4>✦ สรุปจาก AI — ${S.ready_for_autogen ? '<span class="doc-ok">พร้อม AUTO GEN</span>' : '<span class="doc-warn">ควรตรวจ/เพิ่มเอกสารก่อน</span>'} · ความมั่นใจ ${esc(S.confidence || '—')}</h4>
+    <table class="doc-tbl"><tr><th>ประเภทอาคาร</th><td>${esc(S.building_type || '—')}</td></tr><tr><th>จำนวนชั้น</th><td>${esc(S.storeys || '—')}</td></tr><tr><th>ระบบโครงสร้าง</th><td>${esc(S.structure_system || '—')}</td></tr><tr><th>ขนาดอาคาร</th><td>${esc(S.overall_size || '—')}</td></tr>
+    <tr><th>แผ่นที่พบ</th><td>${lst(S.sheets_found)}</td></tr><tr><th>แผ่นที่ขาด</th><td class="doc-warn">${lst(S.sheets_missing)}</td></tr><tr><th>ข้อควรระวัง</th><td>${lst(S.warnings)}</td></tr><tr><th>คำแนะนำ</th><td>${esc(S.recommendation || '—')}</td></tr></table></div>`;
+  h += `<table class="doc-tbl"><tr><th>#</th><th>ไฟล์</th><th>ชนิด / หน้า</th><th>ขนาด</th><th>ชนิดแผ่น (จากข้อความ${A ? ' / AI' : ''})</th><th>มาตราส่วน</th><th>อ่านได้</th></tr>` +
+    L.map((r, k) => { const ap = (A?.pages || []).filter(p => String(p.file || '').includes(r.name)); const ty = [...new Set([...r.pages.flatMap(p => p.types), ...ap.map(p => p.sheet_type).filter(Boolean)])];
+      const read = r.p2?.dxf ? `DXF ${r.p2.layers.length} layer · ${Object.entries(r.p2.cnt).map(([t, n]) => t + ' ' + n).join(', ')}` : `${r.hasText ? 'ข้อความ ' + r.pages.reduce((a, p) => a + p.nText, 0) + ' รายการ · ' : 'ภาพอย่างเดียว · '}${r.p2 ? 'ผนัง (Plan2BOQ หน้า 1) ' + r.p2.walls + ' ส่วน' : ''}`;
+      return `<tr><td>${k + 1}</td><td>${esc(r.name)}</td><td>${esc(r.kind)}<br>${r.nPages} หน้า · ใช้ ${r.nImg} ภาพ</td><td>${kb(r.size)}</td><td>${lst(ty)}</td><td>${lst([...new Set(r.pages.flatMap(p => p.scale))])}</td><td>${esc(read)}</td></tr>`; }).join('') + `</table>`;
+  if (!A) h += `<div class="status">กด "✦ ให้ AI อ่านเอกสาร" เพื่อให้ AI สรุปเนื้อหาทุกหน้า (ใช้ได้เมื่อเปิดใน Claude) — ตารางด้านบนอ่านโดยโปรแกรม</div>`;
+  $('#docSum').innerHTML = h;
+  // detailed
+  let d = '';
+  for (const r of L) { d += `<h4 style="margin:12px 0 4px;color:#7ff3ff">📄 ${esc(r.name)} — ${esc(r.kind)} · ${kb(r.size)}${r.textLen ? ` · ข้อความ ${r.textLen.toLocaleString()} ตัวอักษร` : ''}</h4>`;
+    if (r.p2?.dxf) d += `<div class="doc-page"><div>DXF</div><dl><dt>Layers</dt><dd>${lst(r.p2.layers)}</dd><dt>Entities</dt><dd>${esc(Object.entries(r.p2.cnt).map(([t, n]) => t + ' ' + n).join(' · '))}</dd><dt>$INSUNITS</dt><dd>${r.p2.ins || '—'}</dd></dl></div>`;
+    for (const p of r.pages) { const a = (A?.pages || []).find(x => String(x.file || '').includes(r.name) && (+x.page || 1) === p.i) || (A?.pages || []).find(x => +x.ref === docRef(r.name, p.i));
+      d += `<div class="doc-page"><img alt="หน้า ${p.i}" src="${p.url}"><dl><dt>หน้า</dt><dd>${p.i} / ${r.nPages} · ${p.w}×${p.h} px</dd>
+      <dt>ชนิดแผ่น</dt><dd>${a?.sheet_type ? esc(a.sheet_type) + ' (AI)' : lst(p.types)}</dd>${a?.title ? `<dt>ชื่อแผ่น</dt><dd>${esc(a.title)}${a.sheet_no ? ' · ' + esc(a.sheet_no) : ''}</dd>` : ''}
+      <dt>เลขแผ่น</dt><dd>${lst(p.sheet)}</dd><dt>มาตราส่วน</dt><dd>${a?.scale ? esc(a.scale) : lst(p.scale)}</dd>${a?.grid ? `<dt>กริด</dt><dd>${esc(a.grid)}</dd>` : ''}
+      <dt>ระดับ</dt><dd>${a?.levels ? esc(a.levels) : lst(p.levels)}</dd><dt>รหัสชิ้นส่วน</dt><dd>${lst(p.marks)}</dd><dt>ขนาดหน้าตัด</dt><dd>${lst([...p.sizes, ...p.steel])}</dd><dt>ตัวเลขมิติ</dt><dd>${p.dims} ค่า · ข้อความทั้งหมด ${p.nText}</dd>
+      ${a ? `<dt>ชิ้นส่วน (AI)</dt><dd>${lst(a.elements)}</dd><dt>มิติ (AI)</dt><dd>${lst(a.dimensions)}</dd><dt>วัสดุ (AI)</dt><dd>${lst(a.materials)}</dd><dt>ความชัด</dt><dd class="${/ไม่ชัด/.test(a.readability || '') ? 'doc-bad' : (/พอใช้/.test(a.readability || '') ? 'doc-warn' : 'doc-ok')}">${esc(a.readability || '—')}</dd>${a.missing?.length ? `<dt>ขาด/อ่านไม่ได้</dt><dd class="doc-warn">${lst(a.missing)}</dd>` : ''}${a.notes ? `<dt>หมายเหตุ</dt><dd>${esc(a.notes)}</dd>` : ''}` : ''}</dl></div>`; } }
+  $('#docDet').innerHTML = d || '<div class="status">ยังไม่มีไฟล์</div>'; }
+let docRefs = []; const docRef = (name, page) => { const k = docRefs.findIndex(x => x.name === name && x.page === page); return k + 1; };
+async function openDoc(gate) { if (!state.sources.length) { $('#suMsg') && ($('#suMsg').textContent = 'อัปโหลดแบบก่อน แล้วกด 📋 ตรวจสอบเอกสารแนบ'); openStart(); return; }
+  DOC.after = gate ? 'autogen' : null; $('#docModal').classList.add('on'); $('#docEvery').checked = SET.docFirst !== false;
+  if (DOC.sig !== docSig() || !DOC.local) { DOC.ai = null; DOC.ok = false; $('#docStatus').textContent = 'กำลังอ่านเอกสาร (จำนวนหน้า ข้อความ ชนิดแผ่น ผนัง)…'; $('#docSum').innerHTML = ''; $('#docDet').innerHTML = '';
+    DOC.local = await docLocal(); DOC.sig = docSig(); }
+  docRender(); $('#docStatus').textContent = DOC.ai ? 'อ่านโดยโปรแกรม + AI' : 'อ่านโดยโปรแกรมแล้ว';
+  if (!DOC.ai) { if (!sampleFn) await ensureAI(); if (sampleFn) docRunAI(); else $('#docStatus').textContent = 'อ่านโดยโปรแกรมแล้ว — การอ่านเนื้อหาด้วย AI ใช้ได้เมื่อเปิดใน Claude'; } }
+let docCtl = null;
+async function docRunAI() { if (docCtl) { docCtl.abort(); return; } if (!sampleFn) await ensureAI(); if (!sampleFn) { $('#docStatus').textContent = 'AI อ่านเอกสารใช้ได้เมื่อเปิดใน Claude — รายงานนี้มาจากการอ่านโดยโปรแกรม'; return; }
+  let lim = null; try { lim = await sampleFn.limits(); } catch (e) {} const B = lim?.images?.maxCount || 0; const { ov } = imagePool(); const imgs = ov.slice(0, B);
+  docRefs = []; state.sources.forEach(s => s.images.forEach((b, i) => docRefs.push({ name: s.name, page: i + 1 })));
+  const prompt = `You are a senior Thai structural engineer checking a drawing set BEFORE automatic 3D modelling and quantity take-off. Attached images in order: ${imgs.map((x, i) => `[${i + 1}] ${x.label}`).join('; ') || '(none)'}.
+Files: ${DOC.local.map(r => `${r.name} (${r.kind}, ${r.nPages} pages)`).join('; ')}
+Extracted PDF/DXF text (may be partial):
+${sourceTexts(12000) || '(none)'}
+For EVERY attached image report what it is and what can actually be read (do not guess; say what is unreadable). Answer in Thai. Reply ONLY JSON:
+{"pages":[{"ref":1,"file":"ชื่อไฟล์","page":1,"sheet_type":"แปลนพื้น|แปลนโครงสร้าง|รูปตัด|รูปด้าน|แปลนหลังคา|แปลนฐานราก|ตาราง|แบบขยาย|อื่น ๆ","title":"","sheet_no":"","scale":"","grid":"เช่น X 1–5 (4@6.00 m) / Y A–C (2@8.00 m)","levels":"","elements":["เสา C1 30×30 cm"],"dimensions":["ระยะรวม 24.00 m"],"materials":["fc' 240 ksc"],"readability":"ดี|พอใช้|ไม่ชัด","missing":[""],"notes":""}],
+"summary":{"building_type":"","storeys":"","structure_system":"","overall_size":"","sheets_found":[""],"sheets_missing":[""],"ready_for_autogen":true,"confidence":"high|medium|low","warnings":[""],"recommendation":""}}`;
+  docCtl = new AbortController(); $('#docAI').textContent = 'หยุด AI'; $('#docDot').className = 'hud-dot live'; const t0 = Date.now();
+  try { const o = { signal: docCtl.signal, modelTier: SET.tier || 'complex', cache: false, onText: ({ text }) => { $('#docStatus').textContent = `✦ AI กำลังอ่านเอกสาร ${imgs.length} ภาพ… ${text.length.toLocaleString()} ตัวอักษร`; } };
+    if (imgs.length) o.images = imgs.map(x => x.blob); DOC.ai = await sampleFn.json(prompt, o); docRender();
+    $('#docStatus').textContent = `✔ AI อ่านเอกสารเสร็จใน ${Math.round((Date.now() - t0) / 1000)} วินาที — ${(DOC.ai?.pages || []).length} หน้า`; }
+  catch (e) { $('#docStatus').textContent = e.name === 'AbortError' ? 'หยุดการอ่านด้วย AI แล้ว' : 'AI อ่านเอกสารไม่สำเร็จ: ' + (e.message || e); }
+  finally { docCtl = null; $('#docAI').textContent = '✦ ให้ AI อ่านเอกสาร'; $('#docDot').className = 'hud-dot done'; } }
+function docMd() { const L = DOC.local || [], S = DOC.ai?.summary; let m = `# รายงานตรวจสอบเอกสารแนบ — ${state.params.project_name || ''}\nวันที่ ${new Date().toLocaleString('th-TH')}\n\n## สรุป\n`;
+  m += `- ไฟล์ ${L.length} · หน้ารวม ${L.reduce((a, r) => a + r.nPages, 0)}\n`; L.forEach((r, k) => m += `- ${k + 1}. ${r.name} — ${r.kind} · ${kb(r.size)} · ชนิดแผ่น: ${[...new Set(r.pages.flatMap(p => p.types))].join(', ') || '—'}\n`);
+  if (S) m += `\n### สรุปจาก AI\n- ประเภทอาคาร: ${S.building_type || '—'}\n- จำนวนชั้น: ${S.storeys || '—'}\n- ระบบโครงสร้าง: ${S.structure_system || '—'}\n- ขนาด: ${S.overall_size || '—'}\n- แผ่นที่พบ: ${(S.sheets_found || []).join(', ')}\n- แผ่นที่ขาด: ${(S.sheets_missing || []).join(', ')}\n- พร้อม Auto Gen: ${S.ready_for_autogen ? 'พร้อม' : 'ควรตรวจก่อน'} (ความมั่นใจ ${S.confidence || '—'})\n- ข้อควรระวัง: ${(S.warnings || []).join('; ')}\n- คำแนะนำ: ${S.recommendation || '—'}\n`;
+  m += `\n## รายละเอียดรายหน้า\n`; for (const r of L) { m += `\n### ${r.name}\n`; for (const p of r.pages) { const a = (DOC.ai?.pages || []).find(x => String(x.file || '').includes(r.name) && (+x.page || 1) === p.i);
+      m += `- หน้า ${p.i}: ${a?.sheet_type || p.types.join(', ') || '—'}${a?.title ? ' — ' + a.title : ''} · มาตราส่วน ${a?.scale || p.scale.join(', ') || '—'} · ระดับ ${a?.levels || p.levels.join(', ') || '—'} · รหัสชิ้นส่วน ${p.marks.join(', ') || '—'} · หน้าตัด ${[...p.sizes, ...p.steel].join(', ') || '—'}${a ? ` · ชิ้นส่วน: ${(a.elements || []).join(', ')} · มิติ: ${(a.dimensions || []).join(', ')} · ความชัด: ${a.readability || '—'}${a.missing?.length ? ' · ขาด: ' + a.missing.join(', ') : ''}` : ''}\n`; } }
+  return m; }
+function docGate() { if (SET.docFirst === false || !state.sources.length || (DOC.ok && DOC.sig === docSig())) return false; openDoc(true); return true; }
+$$('#docModal [data-dt]').forEach(b => b.onclick = () => { DOC.tab = b.dataset.dt; $$('#docModal [data-dt]').forEach(x => x.classList.toggle('on', x === b)); $('#docSum').hidden = DOC.tab !== 'sum'; $('#docDet').hidden = DOC.tab !== 'det'; });
+$('#docClose').onclick = () => { $('#docModal').classList.remove('on'); if (docCtl) docCtl.abort(); };
+$('#docAI').onclick = docRunAI; $('#docExp').onclick = () => saveFileQ(dwBase() + '_ตรวจสอบเอกสาร.md', docMd());
+$('#docEvery').onchange = () => { SET.docFirst = $('#docEvery').checked; saveSettings(); };
+$('#docGo').onclick = () => { DOC.ok = true; DOC.sig = docSig(); const S = DOC.ai?.summary;
+  if (S) { const note = `[สรุปเอกสารโดย AI] ${S.building_type || ''} · ${S.storeys || ''} ชั้น · ${S.structure_system || ''} · ${S.overall_size || ''}${S.warnings?.length ? ' · ข้อควรระวัง: ' + S.warnings.join('; ') : ''}`; const un = $('#userNotes'); if (!un.value.includes('[สรุปเอกสารโดย AI]')) un.value = (un.value ? un.value.trim() + '\n' : '') + note; }
+  $('#docModal').classList.remove('on'); $('#startModal').classList.remove('on'); megaGo(); };
+['#docBtn', '#suDocBtn'].forEach(q => { const b = $(q); if (b) b.onclick = () => openDoc(false); });
 </script>
 </body>
 </html>

@@ -157,6 +157,26 @@ ul.as{margin:0;padding-left:18px;font-size:12.5px;display:flex;flex-direction:co
 /* ---------- HUD (futuristic popups) ---------- */
 .hud{position:fixed;inset:0;display:none;place-items:center;z-index:70;padding:16px;background:radial-gradient(ellipse at 50% 40%,#0b1d3ae6,#02050cf2);backdrop-filter:blur(3px)}
 .hud.on{display:grid}
+/* v4.2 — ⚡ AUTO GEN holographic button */
+.mega{position:relative;isolation:isolate;border:0;border-radius:14px;padding:10px 22px;font-weight:800;font-size:15px;line-height:1.15;color:#eaffff;letter-spacing:.6px;cursor:pointer;text-align:center;
+  background:linear-gradient(120deg,#00e5ff,#7c4dff 40%,#ff2bd6 70%,#00e5ff);background-size:300% 300%;
+  box-shadow:0 0 0 1px #9ff6ff88 inset,0 0 18px #00e5ff99,0 0 42px #7c4dff66,0 10px 28px #0007;text-shadow:0 0 8px #00e5ff,0 0 2px #fff;
+  transform:perspective(600px) rotateX(6deg);transition:transform .2s;animation:megaFlow 6s linear infinite,megaPulse 2.4s ease-in-out infinite}
+.mega::before{content:"";position:absolute;inset:2px;border-radius:12px;background:radial-gradient(ellipse at 50% 0%,#14305acc,#050b1af2 70%);z-index:-1}
+.mega::after{content:"";position:absolute;inset:0;border-radius:14px;background:linear-gradient(100deg,transparent 35%,#ffffff66 50%,transparent 65%);background-size:250% 100%;animation:megaScan 2.6s ease-in-out infinite;pointer-events:none}
+.mega:hover{transform:perspective(600px) rotateX(0) translateY(-2px) scale(1.04)}
+.mega:active{transform:scale(.98)}
+.mega small{display:block;font-weight:500;font-size:11px;letter-spacing:.2px;opacity:.9;margin-top:3px;text-shadow:none;color:#bdf6ff}
+#btnMega{min-width:200px;white-space:nowrap;flex-shrink:0}#btnHelp{white-space:nowrap;flex-shrink:0}
+.mega.block{display:block;width:100%;margin:4px 0 10px;padding:14px 16px;font-size:17px}
+.mega.busy{animation:megaFlow 1.2s linear infinite,megaPulse .8s ease-in-out infinite}
+@keyframes megaFlow{to{background-position:300% 0}}
+@keyframes megaPulse{50%{box-shadow:0 0 0 1px #9ff6ffcc inset,0 0 30px #00e5ffdd,0 0 70px #ff2bd677,0 10px 28px #0007}}
+@keyframes megaScan{0%{background-position:150% 0}100%{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.mega,.mega::after{animation:none}}
+.help-body{font-size:14px;line-height:1.65}.help-body h4{margin:14px 0 6px;color:#7ff3ff;font-size:15px}.help-body ol,.help-body ul{margin:0;padding-left:22px}
+.help-body .flow{margin:6px 0;padding:8px 10px;border:1px dashed #22d3ee66;border-radius:10px;background:#04122899;font-size:13px}
+
 .hud .panel{position:relative;max-height:94vh;overflow:auto;border:1px solid #22d3ee55;border-radius:16px;padding:18px 20px;color:#d8f7ff;font-family:var(--f-body);
   background:linear-gradient(160deg,#071731f2,#0a0b25f2);box-shadow:0 0 0 1px #22d3ee22,0 0 50px #22d3ee2e,inset 0 0 80px #22d3ee10;display:flex;flex-direction:column;gap:14px}
 .hud .panel::before{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;opacity:.35;
@@ -359,11 +379,13 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
     <div class="sub">อ่านแบบจากรูปภาพ / PDF / DXF → AI วิเคราะห์ขนาดและรูปร่าง → สร้างโมเดล 3D พร้อมขนาดหน้าตัดเบื้องต้น วัสดุ และไฟล์ STAAD / ETABS</div>
   </div>
   <div class="sp"></div>
+  <button class="mega" id="btnMega" type="button" title="อ่านแบบ → 3D → ออกแบบ → แบบ 2D → BOQ → รายงาน ในคลิกเดียว">⚡ AUTO GEN<small>ครบทุกคำสั่ง · คลิกเดียว</small></button>
+  <button class="btn sm" id="btnHelp" type="button">📖 วิธีใช้</button>
   <button class="btn sm" id="btnStart" type="button">เริ่มงานใหม่</button>
   <button class="btn sm" id="btnSettings" type="button">⚙ ตั้งค่า</button>
   <button class="btn sm" id="btnHolo" type="button">◈ สถานะ / Hologram</button>
   <button class="btn sm" id="btnReview" type="button">🛠 ตรวจสอบ / สั่งแก้</button>
-  <span class="pill" title="เวอร์ชันโปรแกรม">v4.1 · 2026-11-18</span>
+  <span class="pill" title="เวอร์ชันโปรแกรม">v4.2 · 2026-11-18</span>
   <span id="hdrStatus" class="pill">ตัวอย่าง</span>
 </header>
 
@@ -393,6 +415,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
       <label class="f" for="aiMax">รอบตรวจสอบสูงสุด<input id="aiMax" type="number" min="1" max="8" value="4"></label>
       <label class="f" for="aiVerify" style="flex-direction:row;align-items:center;gap:6px;padding-top:18px"><input id="aiVerify" type="checkbox" checked> ตรวจย้อนกลับทุกรอบ</label>
     </div>
+    <button class="mega block" id="btnMega2" type="button">⚡ AUTO GEN — คลิกเดียวครบทุกคำสั่ง<small>อ่านแบบ → ตรวจ → 3D → ออกแบบ → Hologram → แบบ 2D → BOQ สถาปัตย์ + ราคา → รายงานสรุป</small></button>
     <button id="btnAI" class="btn pri">ให้ AI วิเคราะห์แบบและสร้างโมเดล 3D</button>
     <div id="aiStatus" class="status"></div>
     <div class="p2b" style="margin-top:10px;border-top:1px dashed #3a4a5a;padding-top:10px">
@@ -658,7 +681,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
 <!-- ===== HUD: start-up upload popup ===== -->
 <div class="hud" id="startModal" role="dialog" aria-modal="true" aria-labelledby="suTitle">
   <div class="panel" style="width:min(880px,100%)">
-    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.1</span></div>
+    <div class="hud-hd"><span class="hud-dot"></span><b id="suTitle">เริ่มสร้างโมเดลโครงสร้างจากแบบ</b><span class="hud-sp"></span><span class="hud-tag">AI STRUCTURE 3D · v4.2</span></div>
     <div class="hud-sub">อัปโหลดแบบ (รูปภาพ / PDF / DXF) แล้วกด Auto Gen — AI จะอ่านแบบ สร้างโมเดล ออกแบบเบื้องต้น และตรวจย้อนกลับจนครบ พร้อมแสดงสถานะเป็น %</div>
     <div class="hud-grid2">
       <div style="display:flex;flex-direction:column;gap:10px">
@@ -677,7 +700,7 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
       </div>
     </div>
     <div id="suMsg" class="hud-msg"></div>
-    <div class="hud-actions"><button class="hbtn" id="suClose" type="button">ปิด / ใช้โมเดลตัวอย่าง</button><button class="hbtn" id="suP2B" type="button">🧱 อ่านแบบอัตโนมัติ (ไม่ใช้ AI)</button><button class="hbtn pri" id="suAuto" type="button">⚡ Auto Gen — วิเคราะห์ + สร้าง + ตรวจ อัตโนมัติ</button></div>
+    <div class="hud-actions"><button class="hbtn" id="suClose" type="button">ปิด / ใช้โมเดลตัวอย่าง</button><button class="hbtn" id="suP2B" type="button">🧱 อ่านแบบอัตโนมัติ (ไม่ใช้ AI)</button><button class="hbtn pri mega" id="suAuto" type="button">⚡ Auto Gen — วิเคราะห์ + สร้าง + ตรวจ อัตโนมัติ</button></div>
   </div>
 </div>
 <!-- ===== HUD: review & command AI after Auto Gen ===== -->
@@ -759,6 +782,45 @@ tr.qdet>td{background:var(--bg);padding:8px!important}.qd{display:flex;flex-dire
   </div>
 </div>
 <!-- ===== HUD: progress + hologram build sequence ===== -->
+<div class="hud" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" style="z-index:96">
+  <div class="panel" style="width:min(860px,100%)">
+    <div class="hud-hd"><span class="hud-dot live"></span><b id="helpTitle">📖 วิธีใช้ AI Structure 3D Builder v4.2</b><span class="hud-sp"></span><button class="hbtn" id="helpClose" type="button">ปิด</button></div>
+    <div class="help-body">
+      <h4>⚡ ทางลัด: AUTO GEN — คลิกเดียวครบทุกคำสั่ง</h4>
+      <ol>
+        <li><b>อัปโหลดแบบ</b> — ลากไฟล์มาวางในข้อ 01 หรือหน้าต่างเริ่มต้น: รูป JPG/PNG, PDF (หลายหน้า), DXF (DWG ให้ Save As DXF ก่อน) · ใส่หลายไฟล์ได้ เช่น แปลน + รูปตัด + แบบหลังคา</li>
+        <li><b>กด ⚡ AUTO GEN</b> (ปุ่มเรืองแสงด้านบน) — โปรแกรมทำต่อเนื่องเองจนจบ:
+          <div class="flow">อ่านแบบ (AI + Skill) → ตรวจย้อนกลับหลายรอบ → สร้างโมเดล 3D → ออกแบบเบื้องต้น ACI / AISC / AISI → Hologram → แบบก่อสร้าง 2D → Plan2BOQ วัดผนัง/ห้อง/ช่องเปิด → AI ถอด BOQ งานสถาปัตย์ 2 รอบ → <b>รายงานสรุป</b></div></li>
+        <li><b>อ่านรายงานสรุป</b> — ผลออกแบบ (OK/NG), ประเด็นที่ต้องตรวจ, ปริมาณ และราคา พร้อมปุ่ม Export ทุกชนิด</li>
+      </ol>
+      <h4>🌐 โหมดการทำงาน</h4>
+      <ul>
+        <li><b>เปิดใน Claude</b> (ลิงก์ claude.ai/artifact/…) — ใช้ AI ครบ: อ่านแบบ, ตรวจย้อนกลับ, สั่งแก้ด้วยข้อความ, ถอด BOQ + ราคา</li>
+        <li><b>เปิดนอก Claude</b> (GitHub Pages / ไฟล์ในคอม) — Auto Gen ยังทำงานได้ในโหมด <b>ไม่ใช้ AI</b> (Plan2BOQ): หาผนัง ห้อง เสา → สร้างกริด/โมเดล → ออกแบบ → แบบ 2D → BOQ ด้วยราคาเริ่มต้น · ใส่ "กว้างรวมแนวนอน (m)" ในข้อ 01 เพื่อกำหนดมาตราส่วน</li>
+      </ul>
+      <h4>🛠 ตรวจและแก้ไข</h4>
+      <ul>
+        <li><b>✦ AI สั่งงาน</b> — พิมพ์คำสั่งภาษาไทย เช่น "เพิ่มคานซอยกลางช่อง B-C ชั้น 2", "เปลี่ยนหลังคาเป็น Truss Pratt"</li>
+        <li><b>🛠 ตรวจสอบ / สั่งแก้</b> — เลือกประเด็นจากรายการแล้วสั่ง AI แก้ทีละข้อ · ย้อนกลับได้</li>
+        <li><b>ข้อ 02 พารามิเตอร์</b> — แก้กริด ระดับชั้น วัสดุ น้ำหนักบรรทุก เองแล้วกด "สร้างโมเดล + ออกแบบเบื้องต้น"</li>
+        <li><b>BOQ ละเอียด</b> — แตะเส้นผนังที่ผิดบนภาพ Plan2BOQ เพื่อลบ (เช่น เฟอร์นิเจอร์ ต้นไม้) · แก้ราคาได้ทุกช่อง · Factor F</li>
+        <li><b>แท็บ Skill</b> — แก้ Build Skill (อ่านแบบ/ตรวจ) และ Skill ถอดแบบงานสถาปัตยกรรม ให้ตรงมาตรฐานสำนักงาน</li>
+      </ul>
+      <h4>📤 ผลลัพธ์ที่ส่งออกได้</h4>
+      <ul>
+        <li>STAAD (.std) · ETABS (.e2k) · AutoCAD (.dxf) · SketchUp (.dae) · BOQ ปร.4 (.csv / Excel) · Calc Sheet · ชุดแบบก่อสร้าง (HTML → PDF) · บันทึกโครงการ (.json)</li>
+      </ul>
+      <h4>⚠️ ข้อควรระวัง</h4>
+      <ul>
+        <li>ผลเป็นการออกแบบเบื้องต้น (Preliminary) — ต้องวิเคราะห์โครงสร้างจริงและวิศวกรผู้รับผิดชอบตรวจลงนามก่อนใช้ก่อสร้าง</li>
+        <li>ราคาต่อหน่วยเป็นค่าประมาณ — ตรวจกับ สนค. (index.tpso.go.th) และหลักเกณฑ์กรมบัญชีกลางก่อนใช้</li>
+        <li>สิ่งที่โปรแกรม "สมมติ" ดูได้ในรายงาน (assumptions) — ตรวจกับแบบทุกครั้ง</li>
+      </ul>
+    </div>
+    <div class="hud-actions"><label class="hud-chk" for="helpNoShow"><input type="checkbox" id="helpNoShow"> ไม่ต้องแสดงอีก</label><button class="hbtn mega" id="helpGo" type="button">⚡ AUTO GEN<small>เริ่มเลย</small></button></div>
+  </div>
+</div>
+
 <div class="hud" id="progModal" role="dialog" aria-modal="true" aria-labelledby="pgTitle">
   <div class="panel" style="width:min(1180px,100%)">
     <div class="hud-hd"><span class="hud-dot live" id="pgDot"></span><b id="pgTitle">สถานะการทำงาน</b><span class="hud-sp"></span><span class="hud-tag" id="pgClock">00:00</span>
@@ -3711,7 +3773,7 @@ async function startAI(opts={}){
   activeSkill=($('#skText').value||'').trim()||DEFAULT_SKILL; // Skill is loaded and run only when the AI button is pressed
   const maxR=Math.min(8,Math.max(1,+$('#aiMax').value||4)); const doVerify=$('#aiVerify').checked; const tier=SET.tier||'complex';
   { const vs=[]; for(let r=2;r<=maxR;r++) vs.push({id:'v'+r,label:`AI ตรวจย้อนกลับ รอบ ${r}`,w:doVerify?Math.max(6,30/(maxR-1)):0.001,creep:40});
-    PG.start(opts.auto?'Auto Gen — สถานะการทำงาน':'AI วิเคราะห์แบบ — สถานะการทำงาน',[{id:'files',label:'นำเข้าและเตรียมไฟล์แบบ',w:4},{id:'skill',label:'โหลด Skill + ชนิดชิ้นส่วน',w:2},{id:'read',label:'AI อ่านแบบ (รอบ 1)',w:30,creep:45},{id:'build',label:'สร้างโมเดล 3D',w:6},{id:'design',label:'ออกแบบเบื้องต้น (ACI / AISC / AISI)',w:6},...vs,{id:'frames',label:'สร้างภาพลำดับการสร้าง (Hologram)',w:4},{id:'draw',label:'Auto สร้างแบบก่อสร้าง 2D (AutoCAD)',w:3},{id:'final',label:'สรุปผล BOQ / พร้อม Export',w:2}]);
+    PG.start(opts.auto?'Auto Gen — สถานะการทำงาน':'AI วิเคราะห์แบบ — สถานะการทำงาน',[{id:'files',label:'นำเข้าและเตรียมไฟล์แบบ',w:4},{id:'skill',label:'โหลด Skill + ชนิดชิ้นส่วน',w:2},{id:'read',label:'AI อ่านแบบ (รอบ 1)',w:30,creep:45},{id:'build',label:'สร้างโมเดล 3D',w:6},{id:'design',label:'ออกแบบเบื้องต้น (ACI / AISC / AISI)',w:6},...vs,{id:'frames',label:'สร้างภาพลำดับการสร้าง (Hologram)',w:4},{id:'draw',label:'Auto สร้างแบบก่อสร้าง 2D (AutoCAD)',w:3},...(opts.auto?[{id:'p2b',label:'Plan2BOQ วัดผนัง / ห้อง / ช่องเปิด จากแบบ',w:3},{id:'qto',label:'AI ถอด BOQ งานสถาปัตย์ 2 รอบ + ราคา (Skill ถอดแบบ)',w:14,creep:92}]:[]),{id:'final',label:'สรุปผล BOQ / พร้อม Export',w:2},...(opts.auto?[{id:'report',label:'รายงานสรุปทุกคำสั่ง',w:1}]:[])]);
     const nImg=state.sources.reduce((a,s)=>a+s.images.length,0), nT=state.sources.reduce((a,s)=>a+(s.tiles?.length||0),0);
     PG.done('files',`${state.sources.length} ไฟล์ · ${nImg} ภาพรวม · ${nT} ภาพขยาย`); PG.log(`เริ่ม${opts.auto?' Auto Gen':''}: ${state.sources.map(s=>s.name).join(', ')||'(ไม่มีไฟล์ ใช้ข้อความ)'}`);
     const lk=Object.entries(state.params.typeLock||{}); PG.done('skill',`Skill ${activeSkill.length.toLocaleString()} ตัวอักษร · ล็อกชนิด ${lk.length} รายการ`); if(lk.length) PG.log('ล็อกชนิด: '+lk.map(([k,v])=>`${TYPE_LABEL[k]}=${TYPE_OPTS[k][v][0]}`).join(', '));
@@ -3763,10 +3825,10 @@ async function startAI(opts={}){
     }
     renderResults(); PG.set('frames',40,'จับภาพลำดับการสร้าง'); await captureFrames('ผลสุดท้าย'); PG.done('frames',`${state.frames.length} ภาพ · ${stages.length} ขั้นการสร้าง`);
     PG.set('draw',5,'เริ่มจัดแบบ'); await dwGenerate({pg:true}); PG.done('draw',`${state.sheets.length} แผ่น: ${state.sheets.map(s=>s.no).join(', ')} — ส่งออก .dxf ที่แท็บ แบบ 2D`);
-    rebuildQTO(true); autosave(); setTimeout(()=>qtoAutoPrice(),1500);
+    rebuildQTO(true); autosave(); if(opts.auto) await autoTail(PG); else setTimeout(()=>qtoAutoPrice(),1500);
     PG.done('final',`เหล็ก ${f(state.boq.steel/1000,2)} ตัน · คอนกรีต ${f(state.boq.conc,1)} m³ · Export STAAD/ETABS พร้อม`);
     PG.finish(true,'เสร็จสมบูรณ์'); if(SET.autoPlay) setTimeout(()=>$('#btnPlay').click(),400); if(!SET.keepOpen) setTimeout(()=>$('#progModal').classList.remove('on'),2500);
-    state.aiIssues=null; if(SET.review!==false) setTimeout(()=>{ state.chat.push({role:'assistant',text:`${opts.auto?'Auto Gen':'การวิเคราะห์'} เสร็จแล้ว — ตรวจรายการทางซ้าย เลือกแล้วกด "สั่ง AI แก้" หรือพิมพ์คำสั่งเพิ่มเติมได้เลย`}); openReview(); },1200);
+    state.aiIssues=null; if(opts.auto) setTimeout(()=>openReport('⚡ AUTO GEN — ครบทุกขั้น',[]),900); if(SET.review!==false&&!opts.auto) setTimeout(()=>{ state.chat.push({role:'assistant',text:`${opts.auto?'Auto Gen':'การวิเคราะห์'} เสร็จแล้ว — ตรวจรายการทางซ้าย เลือกแล้วกด "สั่ง AI แก้" หรือพิมพ์คำสั่งเพิ่มเติมได้เลย`}); openReview(); },1200);
     const last=state.verify[state.verify.length-1];
     $('#aiStatus').textContent=`เสร็จ ${state.verify.length} รอบ — ${last.kind==='verify'?(last.complete?'AI ยืนยันว่าโมเดลครบตามแบบ':'ยังมีประเด็นค้าง ดูรายการด้านล่าง/แก้ในข้อ 02 แล้วกดสร้างใหม่'):'ข้ามการตรวจย้อนกลับ'}`;
     switchTab('sum');
@@ -3889,7 +3951,7 @@ suDrop.ondrop=e=>{e.preventDefault();suDrop.classList.remove('over');handleFiles
 $('#suShow').onchange=()=>{ SET.showStart=$('#suShow').checked; saveSettings(); };
 $('#suClose').onclick=()=>$('#startModal').classList.remove('on');
 $('#suTypes').onclick=()=>openTypes('lock');
-$('#suAuto').onclick=async()=>{ if(!sampleFn) await ensureAI(); if(!sampleFn){ if(!OUTSIDE_CLAUDE){ $('#suMsg').textContent='ยังเชื่อมต่อ AI ของ Claude ไม่ได้ — กดรีเฟรชหน้านี้ แล้วกด "อนุญาต" เมื่อ Claude ถามสิทธิ์ใช้ AI'; return; } $('#suMsg').innerHTML='Auto Gen ต้องใช้ AI ใน Claude — กำลังเปิดโปรแกรมใน Claude… (อัปโหลดแบบอีกครั้งที่นั่น) <a href="'+CLAUDE_URL+'" target="_blank" rel="noopener">เปิดเอง</a>'; goClaude(); return; }
+$('#suAuto').onclick=async()=>{ if(!sampleFn) await ensureAI(); if(!sampleFn){ $('#startModal').classList.remove('on'); autoGenOffline(); return; }
   if(!state.sources.length&&!$('#suNotes').value.trim()){ $('#suMsg').textContent='อัปโหลดแบบอย่างน้อย 1 ไฟล์ หรือพิมพ์รายละเอียดอาคารก่อน'; return; }
   $('#suMsg').textContent=''; $('#startModal').classList.remove('on'); startAI({auto:true}); };
 function openStart(){ $('#suNotes').value=$('#userNotes').value; $('#suType').value=$('#aiType').value; $('#suShow').checked=SET.showStart; renderFiles(); $('#startModal').classList.add('on'); }
@@ -4134,7 +4196,7 @@ Reply with ONLY JSON:
 
 // ---------- project autosave / load ----------
 const PROJ_KEY='ai3d_project_v1';
-function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.1',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
+function projectData(){ return {app:'AI Structure 3D Builder',ver:'4.2',saved:new Date().toISOString(),params:state.params,chat:state.chat.slice(-40),verify:state.verify||[],qto:state.qto?{rows:state.qto.rows.map(({refs,calc,bars,...r})=>r),basis:state.qto.basis,notes:state.qto.notes,priced:state.qto.priced}:null,F:$('#qF').value,prov:$('#qProv').value}; }
 function autosave(){ try{ localStorage.setItem(PROJ_KEY,JSON.stringify(projectData())); const t=new Date().toLocaleTimeString('th-TH',{hour12:false}); $('#rpSave').textContent='บันทึกอัตโนมัติ '+t; return true; }catch(e){ $('#rpSave').textContent='บันทึกอัตโนมัติไม่ได้ — ใช้ปุ่มบันทึกโครงการ (.json)'; return false; } }
 function loadProject(j,from){ const p=normalizeParams({},j.params); Object.assign(p,j.params); state.chat=j.chat||[]; state.verify=j.verify||[]; fillForm(p); runPipeline(p);
   if(j.qto){ state.qto={...j.qto,geo:null}; rebuildQTO(true); const keep=new Map(j.qto.rows.map(r=>[r.sub+'|'+r.desc,r])); state.qto.rows.forEach(r=>{ const o=keep.get(r.sub+'|'+r.desc); if(o){ r.mat=o.mat; r.lab=o.lab; } }); renderQTO(); }
@@ -4743,6 +4805,45 @@ Reply with ONLY JSON: {"items":[{"cat":"arch","sub":"…","desc":"…","qty":0,"
   const have = new Set(Q.rows.map(r => r.desc.replace(/\s+/g, ''))); const add2 = qMapItems(res?.items).filter(i => !have.has(i.desc.replace(/\s+/g, '')));
   add2.forEach(i => i.note = (i.note ? i.note + ' · ' : '') + 'เพิ่มจากรอบตรวจ checklist'); Q.rows.push(...add2);
   if (Array.isArray(res?.checked)) Q.notes = [...(Q.notes || []), ...res.checked.map(String)].slice(0, 20); renderQTO(); autosave(); return add2.length; }
+
+// ================================================================
+// v4.2 ⚡ AUTO GEN — คลิกเดียวครบทุกคำสั่ง + รายงาน (มี AI = Claude, ไม่มี AI = Plan2BOQ)
+// ================================================================
+async function autoTail(PG) {
+  PG.set('p2b', 10, 'Plan2BOQ วัดผนัง ห้อง ช่องเปิด จากแบบ');
+  try { if (state.sources.some(s => s.raw || (s.images && s.images.length))) { await p2Analyze(); p2ApplyArch(); const m = P2.model;
+      PG.done('p2b', `ผนัง ${m.lines.length} แนว · ห้อง ${m.G.rooms.length} · ประตู/หน้าต่าง ${m.Q.stats.doors}/${m.Q.stats.windows} ต่อชั้น`); PG.log('Plan2BOQ: ' + P2.raw.note); }
+    else PG.skip('p2b', 'ไม่มีไฟล์ภาพ/DXF'); } catch (e) { PG.skip('p2b', 'วัดจากแบบไม่ได้: ' + e.message); }
+  if (sampleFn && SET.autoPrice !== false) { PG.set('qto', 3, 'AI ถอดปริมาณ + ราคา รอบ 1 (Skill ถอดแบบ)');
+    const ob = new MutationObserver(() => PG.set('qto', null, $('#qStatus').textContent.slice(0, 90))); ob.observe($('#qStatus'), { childList: true, characterData: true, subtree: true });
+    try { await qtoAI(true); } finally { ob.disconnect(); } PG.done('qto', $('#qStatus').textContent.slice(0, 140)); PG.log('BOQ: ' + $('#qStatus').textContent); }
+  else PG.skip('qto', sampleFn ? 'ปิด "ใส่ราคาอัตโนมัติ" ในตั้งค่า' : 'ไม่มี AI — ใช้ราคาเริ่มต้น');
+  autosave(); PG.done('report', 'เปิดรายงานสรุป'); }
+async function autoGenOffline() {
+  if (!state.sources.length) { openStart(); $('#suMsg').textContent = 'อัปโหลดแบบ (รูป / PDF / DXF) ก่อน แล้วกด ⚡ AUTO GEN อีกครั้ง'; return; }
+  megaBusy(true);
+  PG.start('⚡ AUTO GEN (โหมดไม่ใช้ AI) — สถานะการทำงาน', [{ id: 'files', label: 'นำเข้าแบบ', w: 2 }, { id: 'p2b', label: 'Plan2BOQ อ่านผนัง / ห้อง / เสา → สร้างกริด', w: 10 }, { id: 'build', label: 'สร้างโมเดล 3D + ออกแบบเบื้องต้น (ACI / AISC / AISI)', w: 6 },
+    { id: 'frames', label: 'สร้างภาพลำดับการสร้าง (Hologram)', w: 4 }, { id: 'draw', label: 'Auto สร้างแบบก่อสร้าง 2D (AutoCAD)', w: 4 }, { id: 'qto', label: 'ถอด BOQ งานโครงสร้าง + สถาปัตย์ (ปร.4)', w: 4 }, { id: 'report', label: 'รายงานสรุปทุกคำสั่ง', w: 1 }]);
+  try { PG.done('files', state.sources.map(s => s.name).join(', ')); PG.log('โหมดไม่ใช้ AI: เปิดใน Claude เพื่อใช้ AI อ่านแบบเต็มรูปแบบ — ' + CLAUDE_URL);
+    PG.set('p2b', 20, 'กำลังอ่านแบบ'); await $('#btnP2B').onclick(); if ($('#p2bStatus').classList.contains('err')) throw new Error($('#p2bStatus').textContent);
+    PG.done('p2b', $('#p2bStatus').textContent.replace(/ · ถอดงาน.*$/, '')); PG.done('build', $('#genStatus').textContent);
+    PG.set('frames', 30, 'จับภาพ'); await captureFrames('Auto Gen'); PG.done('frames', `${state.frames.length} ภาพ`);
+    PG.set('draw', 5, 'เริ่มจัดแบบ'); await dwGenerate({ pg: true }); PG.done('draw', `${state.sheets.length} แผ่น`);
+    rebuildQTO(true); const T = qtoTotals(); PG.done('qto', `${state.qto.rows.length} รายการ · รวม ${f0(T.total)} บาท (ราคาเริ่มต้น)`); autosave(); PG.done('report', 'เปิดรายงานสรุป');
+    PG.finish(true, 'เสร็จสมบูรณ์ (โหมดไม่ใช้ AI)'); if (SET.autoPlay) setTimeout(() => $('#btnPlay').click(), 400);
+    setTimeout(() => openReport('⚡ AUTO GEN — ครบทุกขั้น (โหมดไม่ใช้ AI)', []), 900);
+  } catch (e) { console.error(e); const run = PG.steps.find(s => s.status === 'run'); if (run) PG.fail(run.id, e.message); else PG.finish(false, e.message); }
+  finally { megaBusy(false); } }
+function megaBusy(on) { $$('.mega').forEach(b => b.classList.toggle('busy', on)); }
+async function megaGo() { if (aiCtl || PG.running) { PG.open(); return; }
+  if (!state.sources.length && !$('#userNotes').value.trim()) { openStart(); $('#suMsg').textContent = 'อัปโหลดแบบ (รูป / PDF / DXF) แล้วกด ⚡ AUTO GEN — หรือกด "📖 วิธีใช้"'; return; }
+  if (!sampleFn) await ensureAI(); if (sampleFn) { megaBusy(true); try { await startAI({ auto: true }); } finally { megaBusy(false); } } else autoGenOffline(); }
+['#btnMega', '#btnMega2'].forEach(id => { const b = $(id); if (b) b.onclick = megaGo; });
+// ---------- 📖 วิธีใช้ ----------
+const HELP_KEY = 'ai3d_help_seen_v42';
+function openHelp() { $('#helpModal').classList.add('on'); }
+$('#btnHelp').onclick = openHelp; $('#helpClose').onclick = () => { $('#helpModal').classList.remove('on'); try { if ($('#helpNoShow').checked) localStorage.setItem(HELP_KEY, '1'); } catch (e) {} };
+$('#helpGo').onclick = () => { $('#helpClose').click(); megaGo(); };
 </script>
 </body>
 </html>

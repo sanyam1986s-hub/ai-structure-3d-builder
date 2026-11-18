@@ -608,6 +608,10 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
 .mx-ln{display:flex;gap:8px;white-space:nowrap;overflow:hidden}.mx-ln .t{flex:1;overflow:hidden;text-overflow:ellipsis}.mx-ln .b{color:#00ff66;letter-spacing:-1px}.mx-ln .c{animation:mxBlink .8s steps(1) infinite}
 .mx.done .mx-pc{color:#fff;font-size:34px}.mx.err .mx-box{border-color:#ff3355;box-shadow:0 0 40px #ff335588}.mx.err .mx-pc{color:#ffb3c0;text-shadow:0 0 18px #ff3355}
 @keyframes mxSpin{to{transform:rotate(360deg)}}@keyframes mxBlink{50%{opacity:0}}@keyframes mxFlick{0%,92%,100%{opacity:1}93%{opacity:.35}95%{opacity:1}97%{opacity:.6}}
+.mx.mini{left:auto!important;top:auto!important;right:14px;bottom:14px;transform:none!important;width:min(320px,80vw);z-index:100;transition:opacity .3s}.mx.mini.on{opacity:.88}.mx.mini.out{opacity:0;filter:none}
+.mx.mini .mx-box{background:#000c;border:0;box-shadow:0 0 18px #00ff6633;border-radius:14px}.mx.mini .mx-box canvas{opacity:.22}
+.mx.mini .mx-in{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 12px}.mx.mini .mx-core{width:58px;height:58px;box-shadow:none;background:transparent}.mx.mini .mx-core::before{inset:-3px}.mx.mini .mx-core::after{inset:8px}
+.mx.mini .mx-pc{font-size:16px;letter-spacing:0}.mx.mini .mx-ai{display:none}.mx.mini .mx-ttl{margin:0;flex:1;font-size:10px;letter-spacing:2px}.mx.mini .mx-lines{margin:0;font-size:10.5px;flex-basis:100%}.mx.mini .mx-ln:nth-child(n+3){display:none}.mx.mini .mx-ln .b{display:none}
 .mx.emb{transform:none!important;width:auto;mix-blend-mode:screen;transition:opacity .4s}.mx.emb.on{opacity:.62}.mx.emb.out{opacity:0;filter:none}
 .mx.emb .mx-box{height:100%;background:transparent;border:0;box-shadow:none;border-radius:0}.mx.emb .mx-box canvas{opacity:.28}
 .mx.emb .mx-in{height:100%;align-items:flex-end;justify-content:flex-start;padding:28px 34px 34px}.mx.emb .mx-core{width:96px;height:96px;background:transparent;box-shadow:none;opacity:.7}
@@ -635,7 +639,11 @@ const TB=(()=>{ const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matc
   let showing=false, lastFail=false, hideT=0;
   const bar=p=>p==null?'[ ~~~~~~~~ ]':'['+'█'.repeat(Math.round(p/10))+'░'.repeat(10-Math.round(p/10))+']';
   function host(){ const h=document.querySelector('#progModal.on #holo'); if(!h) return null; const r=h.getBoundingClientRect(); return r.width>40&&r.height>40?r:null; }
-  function dock(){ const r=host(); if(r){ el.classList.add('emb'); Object.assign(el.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'}); } else if(el.classList.contains('emb')){ el.classList.remove('emb'); el.style.cssText=''; } }
+  // any other window open (report, review, edit preview, settings, start, docs, help, Agent Mode, file modal…) -> shrink to a small see-through corner panel
+  function winOpen(){ return [...document.querySelectorAll('.hud.on,#modal.on,.am.on,[role=dialog].on,dialog[open]')].some(w=>w.id!=='progModal'&&w!==el&&!el.contains(w)&&w.getClientRects().length>0&&getComputedStyle(w).visibility!=='hidden'); }
+  function dock(){ const r=host(); if(r){ el.classList.remove('mini'); el.classList.add('emb'); Object.assign(el.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'}); return; }
+    if(el.classList.contains('emb')){ el.classList.remove('emb'); el.style.cssText=''; }
+    el.classList.toggle('mini',winOpen()); }
   function tick(){ dock(); const S=sources();
     if(S.length){ clearTimeout(hideT); el.classList.remove('out','done','err'); if(!showing){ showing=true; el.classList.add('on'); typed.clear(); cancelAnimationFrame(raf); clearTimeout(raf); if(!RM()) rain(); }
       const ps=S.filter(s=>s.pct!=null); const tot=S.find(s=>s.key==='cc')?.pct ?? (ps.length?Math.round(ps.reduce((a,s)=>a+s.pct,0)/ps.length):null);

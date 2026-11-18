@@ -345,7 +345,7 @@ async function aiPlan(sample){ const prompt=`You are the AI structural drafter o
   const r=await sample.json(prompt,{cache:false}); const j=r?.json||r?.data||r; const views=(Array.isArray(j.views)&&j.views.length?j.views:['ftg','plans','roof','elx','ely','sched']);
   document.querySelectorAll('#acViews input').forEach(c=>c.checked=views.includes(c.value)); if(['mm','m'].includes(j.unit)) $('#acUnit').value=j.unit; if([50,100,200].includes(+j.scale)) $('#acScale').value=String(+j.scale);
   AC_PLAN={tf:Math.min(2,Math.max(0.6,+j.text_factor||1)),notes:Array.isArray(j.notes)?j.notes.map(String):[]}; return {views,unit:$('#acUnit').value,scale:+$('#acScale').value,notes:AC_PLAN.notes,summary:j.summary||'',checklist:j.checklist||[]}; }
-$('#skRun').onclick=async()=>{ $('#skRun').disabled=true; try{ await agentFlow(true); } finally{ $('#skRun').disabled=false; } };
+$('#skRun').onclick=async()=>{ $('#skRun').disabled=true; AM.busy='📐 AI เขียนแบบโครงสร้าง'; AM.busyTab='acad'; try{ await agentFlow(true); } finally{ AM.busy=null; $('#skRun').disabled=false; } };
 $('#skSend').onclick=()=>agentFlow(false);
 
 // =====================================================================
@@ -527,13 +527,13 @@ async function runTeam(id){ if(busy) return; busy=true; try{ const U=reporter(id
 const STAGES=[['calc','arch'],['sdraw','boq']];
 async function runAll(){ if(busy) return; busy=true; const on=id=>$(`#tmOn_${id}`)?.checked!==false; const stages=STAGES.map(g=>g.filter(on)).filter(g=>g.length); const ids=stages.flat();
   AM.open({title:'🛰 AI COMMAND CENTER · ระบบ AI ทุกชุด (ทำงานพร้อมกันเป็นขั้น)',steps:[...ids.map(id=>`ขั้น ${stages.findIndex(g=>g.includes(id))+1} · ${TEAMS[id].icon} ${TEAMS[id].name}`),'ขั้น '+(stages.length+1)+' · 🧠 AI รวมรายงานเป็นระบบ'],w:[...ids.map(()=>4),2],canvas:'SYSTEM'});
-  paintFlow('run');
+  paintFlow('run'); TB.cc=ids; TB.ccDone=false; TB.ccMsg='';
   try{ for(const [si,g] of stages.entries()){ AM.log(`===== STAGE ${si+1}: ${g.map(id=>TEAMS[id].name).join(' + ')} (parallel) =====`);
       await Promise.all(g.map(async id=>{ const k=ids.indexOf(id); AM.step(k,'run','เริ่มทำงาน…',1); const U=reporter(id,{nested:k}); paintFlow();
         try{ await TEAMS[id].run(U); if(REP[id].status==='run') U.done('err','หยุดกลางทาง'); }catch(e){ U.issue(`${TEAMS[id].name} ล้มเหลว: ${e.message||e}`,'hi'); U.done('err',String(e.message||e)); } paintFlow(); })); }
-    const k=ids.length; AM.step(k,'run','AI กำลังรวมรายงานทุกชุด…',20); const sys=await systemReport(ids); AM.step(k,'ok',sys.summary.slice(0,150));
+    const k=ids.length; TB.ccMsg='🧠 AI รวมรายงานระบบ…'; AM.step(k,'run','AI กำลังรวมรายงานทุกชุด…',20); const sys=await systemReport(ids); AM.step(k,'ok',sys.summary.slice(0,150));
     AM.canvas(sysHTML(sys,true)); AM.lbl('SYSTEM REPORT · '+sys.overall); }
-  finally{ busy=false; paintReports(); } }
+  finally{ busy=false; TB.cc=null; paintReports(); } }
 // ---------- live workflow diagram (status-coloured) ----------
 function paintFlow(){ const box=$('#tmFlow'); if(!box) return; const C={ok:'#16a34a',warn:'#d97706',err:'#dc2626',run:'#0284c7'}; const col=id=>C[REP[id]?.status]||'#64748b'; const pc=id=>REP[id]?` ${REP[id].pct}%`:'';
   const node=(x,y,w,id,t,sub)=>`<g><rect x="${x}" y="${y}" width="${w}" height="54" rx="10" fill="${id?col(id)+'22':'#7c3aed22'}" stroke="${id?col(id):'#7c3aed'}" stroke-width="2"${id&&REP[id]?.status==='run'?' class="tm-pulse"':''}/><text x="${x+w/2}" y="${y+22}" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">${t}</text><text x="${x+w/2}" y="${y+41}" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">${sub}</text></g>`;
@@ -576,5 +576,44 @@ function paintReports(){ const box=$('#tmReports'); if(!box) return; const col={
     <div class="tm-h" style="margin-top:8px">📊 รายงานการทำงานของ AI แต่ละชุด</div><div id="tmReports"></div>`;
   ORDER.forEach(id=>{ const box=tab.querySelector(`[data-sk="${id}"]`); if(TEAMS[id].skill.paint!==undefined||TEAMS[id].skill.key) skillUI(TEAMS[id].skill,box); else box.innerHTML='<div class="status">ใช้ Skill เขียนแบบในแท็บ AutoCAD 2D (สอน/พัฒนา/ย้อนเวอร์ชันได้ที่นั่น)</div>'; });
   tab.querySelectorAll('[data-run]').forEach(b=>b.onclick=()=>runTeam(b.dataset.run)); $('#tmAll').onclick=runAll; paintReports(); })();
+
+// ---------- AI working badges on each tab: pop up with % + status while AI works, pop out when done ----------
+const TB=(()=>{ const layer=document.createElement('div'); layer.className='tbb-layer'; layer.setAttribute('aria-live','polite'); document.body.appendChild(layer);
+  const st=document.createElement('style'); st.textContent=`.tbb-layer{position:fixed;inset:0;pointer-events:none;z-index:97}
+.tbb{position:fixed;pointer-events:auto;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,0);animation:tbbIn .35s cubic-bezier(.2,1.6,.4,1)}
+.tbb .pill{display:flex;align-items:center;gap:5px;padding:2px 8px 2px 3px;border-radius:999px;font:700 11.5px var(--f-mono,monospace);color:#fff;background:linear-gradient(90deg,#0891b2,#7c3aed,#db2777);background-size:200% 100%;box-shadow:0 0 12px #22d3ee,0 0 24px #7c3aed88;animation:tbbShine 2s linear infinite}
+.tbb .orb{width:16px;height:16px;border-radius:50%;background:conic-gradient(#67e8f9,#a78bfa,#f0abfc,#67e8f9);box-shadow:0 0 8px #fff;animation:tbbSpin 1s linear infinite}
+.tbb .msg{margin-top:3px;max-width:190px;padding:2px 7px;border-radius:7px;font-size:10.5px;line-height:1.3;color:#e0fbff;background:#020617e6;border:1px solid #22d3ee66;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbb.done .pill{background:#16a34a;box-shadow:0 0 16px #22c55e}.tbb.err .pill{background:#dc2626;box-shadow:0 0 16px #ef4444}.tbb.done .orb,.tbb.err .orb{animation:none;background:#fff}
+.tbb.out{animation:tbbOut .55s ease-in forwards}
+@keyframes tbbIn{from{transform:translate(-50%,8px) scale(.2);opacity:0}to{transform:translate(-50%,0) scale(1);opacity:1}}
+@keyframes tbbOut{30%{transform:translate(-50%,-4px) scale(1.25);opacity:1}100%{transform:translate(-50%,-18px) scale(.1);opacity:0}}
+@keyframes tbbSpin{to{transform:rotate(360deg)}}@keyframes tbbShine{to{background-position:200% 0}}
+@media (prefers-reduced-motion:reduce){.tbb,.tbb *{animation:none!important}}`; document.head.appendChild(st);
+  const live=new Map(); // tab -> element
+  const txt=q=>(document.querySelector(q)?.textContent||'').trim();
+  function sources(){ const out={}; const put=(tab,pct,msg,ok)=>{ const o=out[tab]; if(o){ o.n++; if(pct!=null) o.pct=o.pct==null?pct:Math.round((o.pct+pct)/2); o.msg=o.msg||msg; } else out[tab]={pct,msg,n:1}; };
+    // app AI: Auto Gen progress HUD
+    const ps=txt('#pgState'), pp=parseInt(txt('#pgPct'))||0, pm=document.getElementById('progModal'); if(ps&&!/^(พร้อม|เสร็จสมบูรณ์|หยุด \/ ผิดพลาด|กำลังเตรียม)$/.test(ps)&&((pp>0&&pp<100)||pm?.classList.contains('on'))) put('sum',pp,'Auto Gen: '+ps);
+    // app AI: chat edit
+    const cs=txt('#chSend'); if(cs==='หยุด'||cs==='รอยืนยัน…') put('chat',null,txt('#chStatus')||(cs==='หยุด'?'AI กำลังแก้โมเดล…':'รอยืนยันการแก้ไข'));
+    // app AI: detailed QTO + pricing
+    if(txt('#qAI')==='หยุด') put('qto',null,txt('#qStatus')||'AI กำลังถอด BOQ + ราคา…');
+    // AI teams
+    const map={calc:'calc',sdraw:'acad',arch:'acad',boq:'qto'};
+    for(const id of Object.keys(map)){ const r=REP[id]; if(r&&r.status==='run'){ const cur=r.sub.find(x=>x.s==='run'); put(map[id],r.pct,`${r.icon} ${cur?cur.n:'กำลังทำงาน'}`); } }
+    if(TB.cc){ const ids=TB.cc; const p=Math.round(ids.reduce((a,id)=>a+(REP[id]?.pct||0),0)/Math.max(1,ids.length)); const runN=ids.filter(id=>REP[id]?.status==='run'); put('agents',TB.ccDone?100:p,TB.ccMsg||(runN.length?runN.map(id=>TEAMS[id].icon).join(' ')+' กำลังทำงาน':'🧠 รวมรายงานระบบ')); }
+    if(AM.busy) put(AM.busyTab||'acad',null,AM.busy);
+    return out; }
+  function place(el,tab){ const b=document.querySelector(`.tabs button[data-tab="${tab}"]`); if(!b){ el.style.display='none'; return; } const r=b.getBoundingClientRect(); if(!r.width){ el.style.display='none'; return; } el.style.display=''; el.style.left=(r.left+r.width/2)+'px'; el.style.top=(r.top-10)+'px'; }
+  function tick(){ const S=sources();
+    for(const [tab,s] of Object.entries(S)){ let el=live.get(tab); if(!el||el.dataset.fin){ el=document.createElement('div'); el.className='tbb'; el.innerHTML='<div class="pill"><span class="orb" aria-hidden="true"></span><span class="pc"></span></div><div class="msg"></div>'; el.title=''; layer.appendChild(el); live.set(tab,el); el.onclick=()=>document.querySelector(`.tabs button[data-tab="${tab}"]`)?.click(); }
+      el.querySelector('.pc').textContent=s.pct!=null?`AI ${s.pct}%`:'AI ทำงาน'; el.querySelector('.msg').textContent=s.msg||''; el.setAttribute('aria-label',`AI กำลังทำงานในแท็บนี้ ${s.pct!=null?s.pct+'%':''} ${s.msg||''}`); el.title=s.msg||''; place(el,tab); }
+    for(const [tab,el] of [...live]){ if(S[tab]||el.dataset.fin) continue; el.dataset.fin='1'; // finished -> pop out immediately
+      const failed=Object.values(REP).some(r=>r&&r.status==='err'&&Date.now()-r.end<3000&&({calc:'calc',sdraw:'acad',arch:'acad',boq:'qto'})[Object.keys(REP).find(k=>REP[k]===r)]===tab);
+      el.classList.add(failed?'err':'done'); el.querySelector('.pc').textContent=failed?'✖ ผิดพลาด':'✔ เสร็จ'; el.querySelector('.msg')?.remove(); place(el,tab);
+      setTimeout(()=>el.classList.add('out'),250); setTimeout(()=>{ el.remove(); if(live.get(tab)===el) live.delete(tab); },900); } }
+  setInterval(tick,300); addEventListener('resize',tick); document.addEventListener('scroll',tick,true);
+  return {cc:null,ccDone:false,ccMsg:''}; })();
 
 })();

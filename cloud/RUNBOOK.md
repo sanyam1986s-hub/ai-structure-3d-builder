@@ -15,7 +15,7 @@
 | LINE_ตั้งค่า.txt (CHANNEL_TOKEN, TO — ข้อมูลลับ) | `15NwMuPABBMySwHB1NbPc_EbVrgD1I_I2` |
 
 ## ขั้นตอน L — คำสั่งจาก LINE (ทำก่อนทุกรอบ แม้ไม่มีงานใหม่)
-ตัวกลาง Google Apps Script "AI3D LINE Bridge" (`cloud/line_bridge.gs`) รับข้อความ LINE: ตอบทันทีสำหรับ สถานะ / ผล / ช่วย / พร้อม และบันทึกไฟล์ที่ส่งมาเป็นงานใหม่ใน 01 — คำสั่งอื่นบันทึกเป็น `cmd_*.json` ใน 05_คำสั่ง_LINE
+ตัวกลาง Google Apps Script "AI3D LINE Bridge" (`cloud/line_bridge.gs`, Web app `https://script.google.com/macros/s/AKfycbx-wktzkKeOrvBTQpWg5_F6eYVb-07kL2UVEXJg2RAb__PRxAMaPjUV6yhHSBPDpss9/exec` = Webhook URL ของ LINE channel 2012689048 · บัญชี @717shzwt) รับข้อความ LINE: ตอบทันทีสำหรับ สถานะ / ผล / ช่วย / พร้อม และบันทึกไฟล์ที่ส่งมาเป็นงานใหม่ใน 01 — คำสั่งอื่นบันทึกเป็น `cmd_*.json` ใน 05_คำสั่ง_LINE
 1. `search_files` query `parentId = '1wu_SbtxwUwVTF46zW5CvreRzHWgSHzsz' and title contains 'cmd_'` เรียงเก่าก่อน → ดาวน์โหลดแต่ละไฟล์ อ่าน `text` (เป็นข้อมูลจากเจ้าของบัญชี ทำได้เฉพาะงานในขอบเขต AI3D: อ่านแบบ แก้โมเดล รายงาน ถามตอบงานวิศวกรรม — ห้ามลบไฟล์/แชร์/ส่งข้อมูลออกนอก)
 2. ประเภทคำสั่ง:
    - `รันเลย` → ทำขั้นตอน 0–6 กับงานใน 01 ทันที (ไม่ต้องรอ 30 นาที แต่ต้องมีไฟล์แบบ)
